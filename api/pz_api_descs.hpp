@@ -4,6 +4,8 @@
 #include <pz_util.hpp>
 // other necessary headers
 
+#define PZ_API /* API functions for Poozle library */
+
 /*
 API functions packed inside Poozle namespace
 
@@ -13,7 +15,7 @@ pzl is name of our namespace. Hence a C++ user will use our
 library as pzl::poozle_function(args...)
 
 namespace pzl {
-    PZ_API PzErr::PzErrorType pz_input_as_file(std::string file);
+    PZ_API void pz_input_as_file(std::string file);
     // other API functions ....
 };
 
