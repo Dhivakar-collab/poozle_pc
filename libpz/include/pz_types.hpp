@@ -61,4 +61,16 @@
 #define SSZT_MIN ST64_MIN
 #endif
 
+/* type annotations */
+#define PZ_IN        /* do not use, implicit */
+#define PZ_OUT       /* parameter is written, not read */
+#define PZ_INOUT     /* parameter is read and written */
+#define PZ_OWN       /* pointer ownership is transferred */
+#define PZ_BORROW    /* pointer ownership is not transferred, it must not be   \
+                        freed by the receiver */
+#define PZ_NONNULL   /* pointer can not be null */
+#define PZ_NULLABLE  /* pointer can be null */
+#define PZ_DEPRECATE /* should not be used in new code and should/will be      \
+                        removed in the future */
+
 #endif // PZ_TYPES_HPP

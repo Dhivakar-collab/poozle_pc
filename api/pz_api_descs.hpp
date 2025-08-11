@@ -6,19 +6,15 @@
 
 #define PZ_API /* API functions for Poozle library */
 
-/*
-API functions packed inside Poozle namespace
-
-Example :
-
-pzl is name of our namespace. Hence a C++ user will use our
-library as pzl::poozle_function(args...)
-
 namespace pzl {
+/*
+    Example :
     PZ_API void pz_input_as_file(std::string file);
     // other API functions ....
-};
-
 */
+
+namespace pzstd = ::PzStd;
+namespace pzerror = ::PzError;
+}; // namespace pzl
 
 #endif // PZ_API_DESCS_HPP
