@@ -5,11 +5,11 @@
 
 #include <iostream>
 #include <map>
-#include <string>
-#include <vector>
 #include <memory>
-#include <variant>
 #include <regex>
 #include <stdexcept>
+#include <string>
+#include <variant>
+#include <vector>
 
 #endif // PZ_CXX_STD_HPP
