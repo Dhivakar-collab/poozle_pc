@@ -2,8 +2,14 @@ name: Clang Format Checker
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches:
       - dev
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - dev 
+  workflow_dispatch:
 
 jobs:
   clang-format-checking:
