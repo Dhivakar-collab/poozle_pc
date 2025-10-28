@@ -1,6 +1,7 @@
 #ifndef PZ_BUFFER_HPP
 #define PZ_BUFFER_HPP
 
+#include <FMIndex.hpp>
 #include <pz_cxx_std.hpp>
 #include <pz_error.hpp>
 #include <pz_std.hpp>
@@ -42,6 +43,7 @@ class PzBuffer {
 private:
   PzBufferType storage_type_; /**< Current storage mode flag */
   ut64 total_characters_ = 0; /**< Total number of characters stored */
+  FMIndex fm_index;
 
   // Private constructor ensures only PzCore can create buffers.
   explicit PzBuffer(PzBufferType flag = PzBufferType::PZ_BUF_TYPE_SEQUENTIAL);
@@ -56,6 +58,8 @@ private:
 
   PzBuffer &operator=(const PzBuffer &) =
       delete; //   Deleted copy assignment - force move semantics.
+
+  std::string text;
 
   // for linear text processing operations.
   std::vector<std::string>
@@ -138,6 +142,7 @@ public:
 
   static std::shared_ptr<PzBuffer>
   create(PzBufferType type = PzBufferType::PZ_BUF_TYPE_SEQUENTIAL);
+  friend class PzAnalysisExact;
 };
 } // namespace PzStd
 

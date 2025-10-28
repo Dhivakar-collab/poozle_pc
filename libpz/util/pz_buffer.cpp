@@ -85,6 +85,7 @@ bool PzBuffer::load_word(const std::string &word, bool needs_build) {
     PzError::report_error(PzErrorType::PZ_INVALID_INPUT, "Empty word input");
     return false;
   }
+  fm_index = FMIndex(word);
   words_.push_back(word);
   total_characters_ += words_.back().size();
   if (needs_build) {
@@ -103,6 +104,7 @@ bool PzBuffer::load_text(std::string_view text, bool needs_build) {
     PzError::report_error(PzErrorType::PZ_INVALID_INPUT, "Input text is empty");
     return false;
   }
+  fm_index = FMIndex(text);
   // tokenize the input text into words
   // need to convert string_view to string for std::istringstream processing
   std::istringstream iss{std::string(text)};
@@ -127,6 +129,7 @@ bool PzBuffer::load_words(const std::vector<std::string> &words) {
                           "Input word vector is empty");
     return false;
   }
+  fm_index = FMIndex(words);
   // Append all words to the internal storage
   words_.insert(words_.end(), words.begin(), words.end());
   // Update total characters count by adding the characters of new words
@@ -148,6 +151,7 @@ bool PzBuffer::load_words(std::vector<std::string> &&words) {
                           "Input moved word vector is empty");
     return false;
   }
+  fm_index = FMIndex(words);
   // Reserve memory to avoid reallocations
   words_.reserve(words_.size() + words.size());
 
@@ -176,7 +180,9 @@ bool PzBuffer::load_from_file(const std::string &filename) {
   // Read file line-by-line and tokenize
   while (std::getline(file, line)) {
     load_text(line, false);
+    text = text + line;
   }
+  fm_index = FMIndex(text);
   apply_storage_flag();
   return true;
 }
@@ -227,7 +233,9 @@ bool PzBuffer::load_from_file_chunked(const std::string &filename,
     }
 
     load_text(combined_chunk, false);
+    text = text + combined_chunk;
   }
+  text = text + carry_over;
 
   // After the loop, process any remaining content in carry_over
   if (!carry_over.empty()) {

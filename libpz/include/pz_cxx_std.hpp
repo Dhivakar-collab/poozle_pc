@@ -3,6 +3,7 @@
 
 // All standard C++ libraries used for project
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <map>
