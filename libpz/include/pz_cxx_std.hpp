@@ -18,5 +18,6 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
+#include <chrono>
 
 #endif // PZ_CXX_STD_HPP
