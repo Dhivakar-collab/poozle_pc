@@ -4,6 +4,7 @@
 // All standard C++ libraries used for project
 
 #include <algorithm>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -18,6 +19,5 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
-#include <chrono>
 
 #endif // PZ_CXX_STD_HPP
