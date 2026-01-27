@@ -3,9 +3,9 @@
 
 Tokenizer::Tokenizer(std::string_view pat) : pattern(pat) {}
 
-char Tokenizer::peek() const { return eof() ? '\0' : pattern[i]; }
+ut8 Tokenizer::peek() const { return eof() ? '\0' : pattern[i]; }
 
-char Tokenizer::get() { return eof() ? '\0' : pattern[i++]; }
+ut8 Tokenizer::get() { return eof() ? '\0' : pattern[i++]; }
 
 bool Tokenizer::eof() const { return i >= pattern.size(); }
 
@@ -62,7 +62,7 @@ void Tokenizer::add_concat_tokens(std::vector<Token> &tokens) {
 }
 
 Token Tokenizer::next_token() {
-  char c = get();
+  ut8 c = get();
 
   // Position of the character that produced this token
   size_t pos = i - 1;
@@ -79,7 +79,7 @@ Token Tokenizer::next_token() {
   case '|':
     return {TokenType::ALTERNATION, pos};
   case '(': {
-    int id = ++group_counter;
+    st32 id = ++group_counter;
     group_stack.push(id);
     Token t{TokenType::LPAREN, pos};
     t.group_id = id;
@@ -90,7 +90,7 @@ Token Tokenizer::next_token() {
       PzError::report_error(PzError::PzErrorType::PZ_INVALID_INPUT,
                             "Mismatched ')' at position " +
                                 std::to_string(pos));
-    int id = group_stack.top();
+    st32 id = group_stack.top();
     group_stack.pop();
     Token t{TokenType::RPAREN, pos};
     t.group_id = id;
@@ -111,7 +111,7 @@ Token Tokenizer::next_token() {
   }
 }
 
-Token Tokenizer::read_literal(char c) {
+Token Tokenizer::read_literal(ut8 c) {
   Token t{TokenType::LITERAL, i - 1};
   t.literal = c;
   return t;
@@ -124,7 +124,7 @@ Token Tokenizer::read_escape() {
 
   Token t;
   t.pos = i - 1;
-  char c = get();
+  ut8 c = get();
 
   if (c == 'd' || c == 'D' || c == 'w' || c == 'W' || c == 's' || c == 'S') {
     t.type = TokenType::CHAR_CLASS;
@@ -156,49 +156,45 @@ Token Tokenizer::read_escape() {
   return t;
 }
 
-void Tokenizer::add_shorthand_ranges(char c, Token &t) {
-  const char MIN_CHAR = '\0';   // ascii index 0
-  const char MAX_CHAR = '\x7F'; // ascii index 127
+void Tokenizer::add_shorthand_ranges(ut8 c, Token &t) {
+  static constexpr ut8 MIN_CHAR = 0;         // ascii index 0
+  static constexpr ut8 MAX_CHAR = ASCII_MAX; // ascii index 127
   switch (c) {
   case 'd':
-    t.ranges.push_back({'0', '9'});
+    t.ranges.push_back({48, 57}); // '0' - '9'
     break;
   case 'D':
-    t.ranges.insert(t.ranges.end(),
-                    {
-                        {MIN_CHAR, '/'}, // Everything before '0'
-                        {':', MAX_CHAR}  // Everything after '9'
-                    });
+    t.ranges.insert(t.ranges.end(), {
+                                        {MIN_CHAR, 47}, // Everything before '0'
+                                        {58, MAX_CHAR}  // Everything after '9'
+                                    });
     break;
   case 'w':
-    t.ranges.insert(t.ranges.end(),
-                    {{'a', 'z'}, {'A', 'Z'}, {'0', '9'}, {'_', '_'}});
+    t.ranges.insert(
+        t.ranges.end(),
+        {{97, 122}, {65, 90}, {48, 57}, {95, 95}}); // a-z, A-Z, 0-9, _
     break;
   case 'W':
     t.ranges.insert(t.ranges.end(), {
-                                        {MIN_CHAR, '/'}, // Before '0'
-                                        {':', '@'},      // Between '9' and 'A'
-                                        {'[', '^'},      // Between 'Z' and '_'
-                                        {'`', '`'},      // Between '_' and 'a'
-                                        {'{', MAX_CHAR}  // After 'z'
+                                        {MIN_CHAR, 47}, // Before '0'
+                                        {58, 64},       // Between '9' and 'A'
+                                        {91, 94},       // Between 'Z' and '_'
+                                        {96, 96},       // Between '_' and 'a'
+                                        {123, MAX_CHAR} // After 'z'
                                     });
     break;
   case 's':
-    t.ranges.insert(t.ranges.end(), {{' ', ' '},
-                                     {'\t', '\t'},
-                                     {'\n', '\n'},
-                                     {'\r', '\r'},
-                                     {'\f', '\f'},
-                                     {'\v', '\v'}});
+    t.ranges.insert(t.ranges.end(), {{32, 32}, // Space
+                                     {9, 13}}  // \t, \n, \v, \f, \r
+    );
     break;
 
   case 'S':
-    t.ranges.insert(t.ranges.end(),
-                    {
-                        {MIN_CHAR, '\x08'}, // Before \t (0-8)
-                        {'\x0E', '\x1F'},   // Between \r and Space (14-31)
-                        {'!', MAX_CHAR}     // After Space (33-127)
-                    });
+    t.ranges.insert(t.ranges.end(), {
+                                        {MIN_CHAR, 8}, // Before \t
+                                        {14, 31},      // Between \r and Space
+                                        {33, MAX_CHAR} // After Space
+                                    });
     break;
   }
 }
@@ -242,11 +238,11 @@ Token Tokenizer::read_char_class() {
 
   bool have_prev = false;          // pending character for range
   bool last_was_shorthand = false; // whether last token was \d, \w, etc.
-  char prev;
+  ut8 prev;
 
   // Read until closing ']'
   while (!eof() && peek() != ']') {
-    char c = get();
+    ut8 c = get();
     if (c == '\\') // Handle escape sequences
     {
       if (eof())
@@ -313,7 +309,7 @@ Token Tokenizer::read_char_class() {
     // Handle range syntax:
     if (have_prev && c == '-' &&
         peek() != ']') { // when '-' acts as a range specifier
-      char ub = get();
+      ut8 ub = get();
       if (ub == '\\') // Handle escaped upper bound
       {
         if (eof())
@@ -385,15 +381,15 @@ Token Tokenizer::read_quantifier() {
     }
   };
 
-  auto read_int = [&]() -> int {
+  auto read_int = [&]() -> st32 {
     skip_spaces();
-    int val = 0;
+    st32 val = 0;
     bool found = false;
     while (!eof() && std::isdigit(peek())) {
       found = true;
       val = val * 10 + (get() - '0');
     }
-    if (!found)
+    if (!found && peek() != ',')
       PzError::report_error(PzError::PzErrorType::PZ_INVALID_INPUT,
                             "Expected number in quantifier at position " +
                                 std::to_string(t.pos));

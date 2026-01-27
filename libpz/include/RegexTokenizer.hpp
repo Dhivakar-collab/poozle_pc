@@ -2,6 +2,7 @@
 #define REGEX_TOKENIZER_HPP
 
 #include <pz_cxx_std.hpp>
+#include <pz_types.hpp>
 
 /**
  * @brief Types of tokens produced by the regex tokenizer.
@@ -55,10 +56,10 @@ enum class TokenType {
  */
 struct CharRange {
   /** Lower bound */
-  char lo;
+  ut8 lo;
 
   /** Upper bound */
-  char hi;
+  ut8 hi;
 };
 
 /**
@@ -70,10 +71,10 @@ struct Token {
   /** Position in pattern (for error reporting) */
   size_t pos;
   /** Group ID for parentheses */
-  int group_id = -1;
+  st32 group_id = -1;
 
   /** Literal character value */
-  char literal = '\0';
+  ut8 literal = '\0';
 
   /** Whether character class is negated */
   bool negated = false;
@@ -81,9 +82,9 @@ struct Token {
   std::vector<CharRange> ranges{};
 
   /** Minimum repetitions for quantifier */
-  int min = 0;
+  st32 min = 0;
   /** Maximum repetitions (-1 means unbounded) */
-  int max = 0;
+  st32 max = 0;
 };
 
 /**
@@ -109,21 +110,21 @@ private:
   /** Current cursor position */
   size_t i = 0;
   /** Counter for assigning group IDs */
-  int group_counter = 0;
+  st32 group_counter = 0;
   /** Stack for nested group tracking */
-  std::stack<int> group_stack;
+  std::stack<st32> group_stack;
 
   /** Peek next character without consuming */
-  char peek() const;
+  ut8 peek() const;
   /** Consume next character */
-  char get();
+  ut8 get();
   /** Check for end of input */
   bool eof() const;
 
   /** Read next token */
   Token next_token();
   /** Read literal character */
-  Token read_literal(char);
+  Token read_literal(ut8);
   /** Read escape sequence */
   Token read_escape();
   /** Read character class */
@@ -132,7 +133,7 @@ private:
   Token read_quantifier();
 
   /** @brief Populates a token with ranges for \d, \w, \s, etc. */
-  void add_shorthand_ranges(char, Token &);
+  void add_shorthand_ranges(ut8, Token &);
 
   /** @brief Inserts implicit CONCAT tokens where concatenation occurs. */
   void add_concat_tokens(std::vector<Token> &);
