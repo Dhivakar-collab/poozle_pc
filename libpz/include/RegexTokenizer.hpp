@@ -108,7 +108,7 @@ private:
   /** Input regex pattern */
   std::string_view pattern;
   /** Current cursor position */
-  size_t i = 0;
+  size_t cursor_pos = 0;
   /** Counter for assigning group IDs */
   st32 group_counter = 0;
   /** Stack for nested group tracking */

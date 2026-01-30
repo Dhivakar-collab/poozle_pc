@@ -3,18 +3,18 @@
 
 Tokenizer::Tokenizer(std::string_view pat) : pattern(pat) {}
 
-ut8 Tokenizer::peek() const { return eof() ? '\0' : pattern[i]; }
+ut8 Tokenizer::peek() const { return eof() ? '\0' : pattern[cursor_pos]; }
 
-ut8 Tokenizer::get() { return eof() ? '\0' : pattern[i++]; }
+ut8 Tokenizer::get() { return eof() ? '\0' : pattern[cursor_pos++]; }
 
-bool Tokenizer::eof() const { return i >= pattern.size(); }
+bool Tokenizer::eof() const { return cursor_pos >= pattern.size(); }
 
 std::vector<Token> Tokenizer::tokenize() {
   std::vector<Token> tokens;
   while (!eof()) {
     tokens.push_back(next_token());
   }
-  tokens.push_back(Token{TokenType::END, i});
+  tokens.push_back(Token{TokenType::END, cursor_pos});
   add_concat_tokens(tokens);
   return tokens;
 }
@@ -27,12 +27,12 @@ void Tokenizer::add_concat_tokens(std::vector<Token> &tokens) {
   normalized.reserve(tokens.size() * 2);
 
   for (size_t idx = 0; idx < tokens.size(); idx++) {
-    normalized.push_back(tokens[idx]);
+    normalized.push_back(std::move(tokens[idx]));
 
     if (idx + 1 >= tokens.size())
       break;
 
-    const Token &current = tokens[idx];
+    const Token &current = normalized.back();
     const Token &next = tokens[idx + 1];
 
     // Can the current token be the left side of a concatenation?
@@ -65,7 +65,7 @@ Token Tokenizer::next_token() {
   ut8 c = get();
 
   // Position of the character that produced this token
-  size_t pos = i - 1;
+  size_t pos = cursor_pos - 1;
 
   switch (c) {
   case '.':
@@ -112,7 +112,7 @@ Token Tokenizer::next_token() {
 }
 
 Token Tokenizer::read_literal(ut8 c) {
-  Token t{TokenType::LITERAL, i - 1};
+  Token t{TokenType::LITERAL, cursor_pos - 1};
   t.literal = c;
   return t;
 }
@@ -123,7 +123,7 @@ Token Tokenizer::read_escape() {
                           "Dangling escape at end of input");
 
   Token t;
-  t.pos = i - 1;
+  t.pos = cursor_pos - 1;
   ut8 c = get();
 
   if (c == 'd' || c == 'D' || c == 'w' || c == 'W' || c == 's' || c == 'S') {
@@ -230,7 +230,7 @@ void Tokenizer::normalize_ranges(std::vector<CharRange> &ranges) {
 }
 
 Token Tokenizer::read_char_class() {
-  Token t{TokenType::CHAR_CLASS, i - 1};
+  Token t{TokenType::CHAR_CLASS, cursor_pos - 1};
   if (peek() == '^') {
     t.negated = true;
     get();
@@ -248,7 +248,7 @@ Token Tokenizer::read_char_class() {
       if (eof())
         PzError::report_error(PzError::PzErrorType::PZ_INVALID_INPUT,
                               "Dangling escape in char class at position " +
-                                  std::to_string(i));
+                                  std::to_string(cursor_pos));
       // Flush pending literal before escape
       if (have_prev) {
         t.ranges.push_back({prev, prev});
@@ -316,20 +316,20 @@ Token Tokenizer::read_char_class() {
           PzError::report_error(
               PzError::PzErrorType::PZ_INVALID_INPUT,
               "Dangling escape in character range at position " +
-                  std::to_string(i));
+                  std::to_string(cursor_pos));
         ub = get();
         if (ub == 'd' || ub == 'D' || ub == 'w' || ub == 'W' || ub == 's' ||
             ub == 'S') {
           PzError::report_error(PzError::PzErrorType::PZ_INVALID_INPUT,
                                 "Cannot create a range with shorthand escape "
                                 "sequences at position " +
-                                    std::to_string(i - 1));
+                                    std::to_string(cursor_pos - 1));
         }
       }
       if (prev > ub)
         PzError::report_error(PzError::PzErrorType::PZ_INVALID_INPUT,
                               "Invalid character range at position " +
-                                  std::to_string(i - 1));
+                                  std::to_string(cursor_pos - 1));
       t.ranges.push_back({prev, ub});
       have_prev = false;
       continue;
@@ -338,7 +338,7 @@ Token Tokenizer::read_char_class() {
       PzError::report_error(
           PzError::PzErrorType::PZ_INVALID_INPUT,
           "Cannot create a range with shorthand escape sequences at position " +
-              std::to_string(i - 1));
+              std::to_string(cursor_pos - 1));
     }
 
     // Flush pending literal if no range follows
@@ -373,7 +373,7 @@ Token Tokenizer::read_char_class() {
 
 Token Tokenizer::read_quantifier() {
   // Position of '{' is stored in t.pos for error reporting
-  Token t{TokenType::QUANTIFIER_RANGE, i - 1};
+  Token t{TokenType::QUANTIFIER_RANGE, cursor_pos - 1};
 
   auto skip_spaces = [&]() {
     while (!eof() && std::isspace(peek())) {
