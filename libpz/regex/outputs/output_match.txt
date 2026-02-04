@@ -1,0 +1,731 @@
+
+================================================================================
+BASIC LITERAL MATCHING
+================================================================================
+[SUCCESS] Single char match                   | Pattern: a                              | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Single char no match                | Pattern: a                              | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Multi char exact match              | Pattern: abc                            | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Prefix match success                | Pattern: abc                            | Text: abcd                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Incomplete match                    | Pattern: abc                            | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Match not at start                  | Pattern: abc                            | Text: xabc                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Word prefix match                   | Pattern: hello                          | Text: hello world               | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Word not at start                   | Pattern: world                          | Text: hello world               | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Empty pattern empty text            | Pattern:                                | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Empty pattern any text              | Pattern:                                | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Non-empty pattern empty text        | Pattern: abc                            | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Three char match                    | Pattern: xyz                            | Text: xyz                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Substring at start                  | Pattern: test                           | Text: testing                   | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Substring not at start              | Pattern: test                           | Text: contest                   | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Long word prefix                    | Pattern: programming                    | Text: programming language      | Expected: MATCH   | Got: MATCH   [0,11)
+
+================================================================================
+DOT OPERATOR (.)
+================================================================================
+[SUCCESS] Dot matches single char             | Pattern: .                              | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Dot matches any letter              | Pattern: .                              | Text: x                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Dot matches digit                   | Pattern: .                              | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Dot matches space                   | Pattern: .                              | Text:                           | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Dot does not match newline          | Pattern: .                              | Text: 
+                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Dot requires one char               | Pattern: .                              | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Dot in middle                       | Pattern: a.c                            | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Dot matches any middle char         | Pattern: a.c                            | Text: axc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Dot matches digit                   | Pattern: a.c                            | Text: a5c                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Dot requires a char                 | Pattern: a.c                            | Text: ac                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Dot matches exactly one             | Pattern: a.c                            | Text: abbc                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two dots two chars                  | Pattern: ..                             | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Three dots three chars              | Pattern: ...                            | Text: xyz                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Four dots three chars               | Pattern: ....                           | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Multiple dots                       | Pattern: a.b.c                          | Text: aXbYc                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Dot matches tab                     | Pattern: .                              | Text: 	                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Dot at start                        | Pattern: .a                             | Text: ba                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Dot at end                          | Pattern: a.                             | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Alternating dots                    | Pattern: .a.b.                          | Text: 1a2b3                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Dot in word                         | Pattern: h.llo                          | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Dot matches variation               | Pattern: h.llo                          | Text: hallo                     | Expected: MATCH   | Got: MATCH   [0,5)
+
+================================================================================
+STAR OPERATOR (*) - Zero or More
+================================================================================
+[SUCCESS] Star matches zero                   | Pattern: a*                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Star matches one                    | Pattern: a*                             | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Star matches many                   | Pattern: a*                             | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Star matches ten                    | Pattern: a*                             | Text: aaaaaaaaaa                | Expected: MATCH   | Got: MATCH   [0,10)
+[SUCCESS] Star zero then mismatch             | Pattern: a*                             | Text: b                         | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Star zero then match                | Pattern: a*b                            | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Star one then match                 | Pattern: a*b                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Star many then match                | Pattern: a*b                            | Text: aaab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Star lots then match                | Pattern: a*b                            | Text: aaaaaaab                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Star many but no b                  | Pattern: a*b                            | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Star at end zero                    | Pattern: ab*                            | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Star at end one                     | Pattern: ab*                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Star at end many                    | Pattern: ab*                            | Text: abbb                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Star middle zero                    | Pattern: ab*c                           | Text: ac                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Star middle one                     | Pattern: ab*c                           | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Star middle many                    | Pattern: ab*c                           | Text: abbbc                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Two stars zero each                 | Pattern: a*b*                           | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] First star many second zero         | Pattern: a*b*                           | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] First star zero second many         | Pattern: a*b*                           | Text: bbb                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Both stars many                     | Pattern: a*b*                           | Text: aaabbb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Dotstar empty                       | Pattern: .*                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Dotstar matches all                 | Pattern: .*                             | Text: anything                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] A then dotstar empty                | Pattern: a.*                            | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] A then dotstar matches              | Pattern: a.*                            | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Dotstar in middle                   | Pattern: a.*z                           | Text: abcxyz                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Group star zero                     | Pattern: (ab)*                          | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Group star one                      | Pattern: (ab)*                          | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Group star two                      | Pattern: (ab)*                          | Text: abab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Group star three                    | Pattern: (ab)*                          | Text: ababab                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Group star incomplete prefix        | Pattern: (ab)*                          | Text: aba                       | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Triple star all present             | Pattern: x*y*z*                         | Text: xxxyyyzzz                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Triple star first zero              | Pattern: x*y*z*                         | Text: yyyzzz                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Triple star middle zero             | Pattern: x*y*z*                         | Text: xxxzzz                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Triple star last zero               | Pattern: x*y*z*                         | Text: xxxyyy                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Triple star all zero                | Pattern: x*y*z*                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+
+================================================================================
+PLUS OPERATOR (+) - One or More
+================================================================================
+[SUCCESS] Plus requires at least one          | Pattern: a+                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Plus matches one                    | Pattern: a+                             | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Plus matches two                    | Pattern: a+                             | Text: aa                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Plus matches many                   | Pattern: a+                             | Text: aaaaa                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Plus no match                       | Pattern: a+                             | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Plus one then b                     | Pattern: a+b                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Plus many then b                    | Pattern: a+b                            | Text: aaab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Plus requires a before b            | Pattern: a+b                            | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Plus at end one                     | Pattern: ab+                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Plus at end many                    | Pattern: ab+                            | Text: abbb                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Plus at end requires b              | Pattern: ab+                            | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Plus middle one                     | Pattern: ab+c                           | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Plus middle two                     | Pattern: ab+c                           | Text: abbc                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Plus middle many                    | Pattern: ab+c                           | Text: abbbbbc                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Plus middle requires b              | Pattern: ab+c                           | Text: ac                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two plus minimum                    | Pattern: a+b+                           | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two plus many                       | Pattern: a+b+                           | Text: aaabbb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Two plus first only                 | Pattern: a+b+                           | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two plus second only                | Pattern: a+b+                           | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Dotplus one char                    | Pattern: .+                             | Text: x                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Dotplus many chars                  | Pattern: .+                             | Text: anything                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Dotplus empty fails                 | Pattern: .+                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Dotplus middle minimum              | Pattern: a.+b                           | Text: axb                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Dotplus middle many                 | Pattern: a.+b                           | Text: axxxxb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Dotplus requires one                | Pattern: a.+b                           | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group plus one                      | Pattern: (ab)+                          | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Group plus two                      | Pattern: (ab)+                          | Text: abab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Group plus three                    | Pattern: (ab)+                          | Text: ababab                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Group plus empty fails              | Pattern: (ab)+                          | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group plus incomplete               | Pattern: (ab)+                          | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digit plus one                      | Pattern: \d+                            | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit plus many                     | Pattern: \d+                            | Text: 12345                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Digit plus empty                    | Pattern: \d+                            | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digit plus no digits                | Pattern: \d+                            | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Word plus letters                   | Pattern: \w+                            | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Word plus mixed                     | Pattern: \w+                            | Text: hello123                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Word plus empty                     | Pattern: \w+                            | Text:                           | Expected: NO MATCH | Got: NO MATCH
+
+================================================================================
+QUESTION OPERATOR (?) - Zero or One
+================================================================================
+[SUCCESS] Question matches zero               | Pattern: a?                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Question matches one                | Pattern: a?                             | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Question matches one of two         | Pattern: a?                             | Text: aa                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Question zero then match            | Pattern: a?b                            | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Question one then match             | Pattern: a?b                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Question max one                    | Pattern: a?b                            | Text: aab                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Question at end zero                | Pattern: ab?                            | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Question at end one                 | Pattern: ab?                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Question at end prefix match        | Pattern: ab?                            | Text: abb                       | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Question middle zero                | Pattern: ab?c                           | Text: ac                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Question middle one                 | Pattern: ab?c                           | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Question middle does not match two  | Pattern: ab?c                           | Text: abbc                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Optional u - without                | Pattern: colou?r                        | Text: color                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Optional u - with                   | Pattern: colou?r                        | Text: colour                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Optional u - too many               | Pattern: colou?r                        | Text: colouur                   | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Three question all zero             | Pattern: a?b?c?                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Three question first only           | Pattern: a?b?c?                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Three question middle only          | Pattern: a?b?c?                         | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Three question last only            | Pattern: a?b?c?                         | Text: c                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Three question first two            | Pattern: a?b?c?                         | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Three question last two             | Pattern: a?b?c?                         | Text: bc                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Three question all present          | Pattern: a?b?c?                         | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Dotquestion zero                    | Pattern: .?                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Dotquestion one                     | Pattern: .?                             | Text: x                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Dotquestion one of two              | Pattern: .?                             | Text: xy                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group question zero                 | Pattern: (ab)?                          | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Group question one                  | Pattern: (ab)?                          | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Group question prefix match         | Pattern: (ab)?                          | Text: abab                      | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Optional s - without                | Pattern: https?://                      | Text: http://                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Optional s - with                   | Pattern: https?://                      | Text: https://                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Digit question zero                 | Pattern: \d?                            | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Digit question one                  | Pattern: \d?                            | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Two digit question both             | Pattern: \d?\d?                         | Text: 12                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two digit question one              | Pattern: \d?\d?                         | Text: 1                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Two digit question zero             | Pattern: \d?\d?                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+
+================================================================================
+ALTERNATION (|) - OR Operator
+================================================================================
+[SUCCESS] Alternation first option            | Pattern: a|b                            | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Alternation second option           | Pattern: a|b                            | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Alternation no match                | Pattern: a|b                            | Text: c                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Alternation prefix match            | Pattern: a|b                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Word alternation first              | Pattern: cat|dog                        | Text: cat                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Word alternation second             | Pattern: cat|dog                        | Text: dog                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Word alternation no match           | Pattern: cat|dog                        | Text: bird                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Word alternation prefix             | Pattern: cat|dog                        | Text: category                  | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Triple alternation first            | Pattern: a|b|c                          | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Triple alternation second           | Pattern: a|b|c                          | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Triple alternation third            | Pattern: a|b|c                          | Text: c                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Triple alternation no match         | Pattern: a|b|c                          | Text: d                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group alternation first             | Pattern: (abc)|(def)                    | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group alternation second            | Pattern: (abc)|(def)                    | Text: def                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group alternation no match          | Pattern: (abc)|(def)                    | Text: ghi                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Color first                         | Pattern: red|green|blue                 | Text: red                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Color second                        | Pattern: red|green|blue                 | Text: green                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Color third                         | Pattern: red|green|blue                 | Text: blue                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Color no match                      | Pattern: red|green|blue                 | Text: yellow                    | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Alternation shorter first           | Pattern: a|ab                           | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Alternation longer second           | Pattern: a|ab                           | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Alternation order matters           | Pattern: ab|a                           | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Alternation longer matches          | Pattern: ab|a                           | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Alternation in group then c         | Pattern: (a|b)c                         | Text: ac                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Alternation in group then c         | Pattern: (a|b)c                         | Text: bc                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Alternation in group no match       | Pattern: (a|b)c                         | Text: cc                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] A then alternation first            | Pattern: a(b|c)                         | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] A then alternation second           | Pattern: a(b|c)                         | Text: ac                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] A then alternation no match         | Pattern: a(b|c)                         | Text: ad                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two alternations 1-1                | Pattern: (a|b)(c|d)                     | Text: ac                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two alternations 1-2                | Pattern: (a|b)(c|d)                     | Text: ad                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two alternations 2-1                | Pattern: (a|b)(c|d)                     | Text: bc                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two alternations 2-2                | Pattern: (a|b)(c|d)                     | Text: bd                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two alternations no match           | Pattern: (a|b)(c|d)                     | Text: ae                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Decision first                      | Pattern: yes|no|maybe                   | Text: yes                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Decision second                     | Pattern: yes|no|maybe                   | Text: no                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Decision third                      | Pattern: yes|no|maybe                   | Text: maybe                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Empty alternation sides             | Pattern:                                | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+
+================================================================================
+CHARACTER CLASSES
+================================================================================
+[SUCCESS] Class matches first                 | Pattern: [abc]                          | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Class matches second                | Pattern: [abc]                          | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Class matches third                 | Pattern: [abc]                          | Text: c                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Class no match                      | Pattern: [abc]                          | Text: d                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Class empty text                    | Pattern: [abc]                          | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Range matches first                 | Pattern: [a-z]                          | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range matches middle                | Pattern: [a-z]                          | Text: m                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range matches last                  | Pattern: [a-z]                          | Text: z                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range case sensitive                | Pattern: [a-z]                          | Text: A                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Range no digit                      | Pattern: [a-z]                          | Text: 5                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Upper range first                   | Pattern: [A-Z]                          | Text: A                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Upper range middle                  | Pattern: [A-Z]                          | Text: M                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Upper range last                    | Pattern: [A-Z]                          | Text: Z                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Upper range no lower                | Pattern: [A-Z]                          | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digit range first                   | Pattern: [0-9]                          | Text: 0                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit range middle                  | Pattern: [0-9]                          | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit range last                    | Pattern: [0-9]                          | Text: 9                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit range no letter               | Pattern: [0-9]                          | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Multi range lower                   | Pattern: [a-zA-Z]                       | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Multi range upper                   | Pattern: [a-zA-Z]                       | Text: Z                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Multi range no digit                | Pattern: [a-zA-Z]                       | Text: 5                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Alphanum letter                     | Pattern: [a-z0-9]                       | Text: x                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Alphanum digit                      | Pattern: [a-z0-9]                       | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Alphanum no upper                   | Pattern: [a-z0-9]                       | Text: X                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Full alphanum lower                 | Pattern: [a-zA-Z0-9]                    | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Full alphanum upper                 | Pattern: [a-zA-Z0-9]                    | Text: Z                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Full alphanum digit                 | Pattern: [a-zA-Z0-9]                    | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Full alphanum no special            | Pattern: [a-zA-Z0-9]                    | Text: !                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Vowels a                            | Pattern: [aeiou]                        | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Vowels e                            | Pattern: [aeiou]                        | Text: e                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Vowels i                            | Pattern: [aeiou]                        | Text: i                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Vowels o                            | Pattern: [aeiou]                        | Text: o                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Vowels u                            | Pattern: [aeiou]                        | Text: u                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Vowels no consonant                 | Pattern: [aeiou]                        | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Class plus one                      | Pattern: [abc]+                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Class plus multiple                 | Pattern: [abc]+                         | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Class plus repeated                 | Pattern: [abc]+                         | Text: aaabbbccc                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Class plus no match                 | Pattern: [abc]+                         | Text: d                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digit class plus                    | Pattern: [0-9]+                         | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Digit class plus one                | Pattern: [0-9]+                         | Text: 0                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit class plus no match           | Pattern: [0-9]+                         | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Lower class star zero               | Pattern: [a-z]*                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Lower class star many               | Pattern: [a-z]*                         | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Lower class star zero then mismatch | Pattern: [a-z]*                         | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,0)
+
+================================================================================
+NEGATED CHARACTER CLASSES
+================================================================================
+[SUCCESS] Negated class match                 | Pattern: [^abc]                         | Text: d                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated class other                 | Pattern: [^abc]                         | Text: x                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated class first                 | Pattern: [^abc]                         | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated class second                | Pattern: [^abc]                         | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated class third                 | Pattern: [^abc]                         | Text: c                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated range upper                 | Pattern: [^a-z]                         | Text: A                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated range digit                 | Pattern: [^a-z]                         | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated range in range              | Pattern: [^a-z]                         | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated range middle                | Pattern: [^a-z]                         | Text: m                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated range last                  | Pattern: [^a-z]                         | Text: z                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated digit letter                | Pattern: [^0-9]                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated digit special               | Pattern: [^0-9]                         | Text: !                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated digit in range              | Pattern: [^0-9]                         | Text: 5                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated vowels consonant            | Pattern: [^aeiou]                       | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated vowels other                | Pattern: [^aeiou]                       | Text: x                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated vowels a                    | Pattern: [^aeiou]                       | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated vowels e                    | Pattern: [^aeiou]                       | Text: e                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated upper lower ok              | Pattern: [^A-Z]                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated upper digit ok              | Pattern: [^A-Z]                         | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated upper first                 | Pattern: [^A-Z]                         | Text: A                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated upper last                  | Pattern: [^A-Z]                         | Text: Z                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated class plus match            | Pattern: [^abc]+                        | Text: xyz                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Negated class plus many             | Pattern: [^abc]+                        | Text: defgh                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Negated class plus excluded         | Pattern: [^abc]+                        | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated digit plus letters          | Pattern: [^0-9]+                        | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Negated digit plus digits           | Pattern: [^0-9]+                        | Text: 123                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated space letter                | Pattern: [^ ]                           | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated space digit                 | Pattern: [^ ]                           | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated space space                 | Pattern: [^ ]                           | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Negated newline letter              | Pattern: [^
+]                           | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Negated newline newline             | Pattern: [^
+]                           | Text: 
+                         | Expected: NO MATCH | Got: NO MATCH
+
+================================================================================
+ESCAPE SEQUENCES - SHORTHAND CHARACTER CLASSES
+================================================================================
+[SUCCESS] Digit shorthand 0                   | Pattern: \d                             | Text: 0                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit shorthand 5                   | Pattern: \d                             | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit shorthand 9                   | Pattern: \d                             | Text: 9                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digit shorthand letter              | Pattern: \d                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digit shorthand space               | Pattern: \d                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digits plus one                     | Pattern: \d+                            | Text: 0                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Digits plus many                    | Pattern: \d+                            | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Digits plus all                     | Pattern: \d+                            | Text: 0987654321                | Expected: MATCH   | Got: MATCH   [0,10)
+[SUCCESS] Digits plus empty                   | Pattern: \d+                            | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digits plus letters                 | Pattern: \d+                            | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digits star zero                    | Pattern: \d*                            | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Digits star many                    | Pattern: \d*                            | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Digits star zero then letters       | Pattern: \d*                            | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Non-digit letter                    | Pattern: \D                             | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-digit upper                     | Pattern: \D                             | Text: Z                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-digit special                   | Pattern: \D                             | Text: !                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-digit space                     | Pattern: \D                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-digit digit                     | Pattern: \D                             | Text: 5                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-digits plus letters             | Pattern: \D+                            | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Non-digits plus special             | Pattern: \D+                            | Text: !@#                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Non-digits plus digits              | Pattern: \D+                            | Text: 123                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Word char lower                     | Pattern: \w                             | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Word char upper                     | Pattern: \w                             | Text: Z                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Word char digit                     | Pattern: \w                             | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Word char underscore                | Pattern: \w                             | Text: _                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Word char special                   | Pattern: \w                             | Text: !                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Word char space                     | Pattern: \w                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Word chars letters                  | Pattern: \w+                            | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Word chars mixed                    | Pattern: \w+                            | Text: Hello123                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Word chars with underscore          | Pattern: \w+                            | Text: test_var                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Word chars prefix                   | Pattern: \w+                            | Text: hello world               | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Word chars empty                    | Pattern: \w+                            | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Word chars special only             | Pattern: \w+                            | Text: !!!                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-word special                    | Pattern: \W                             | Text: !                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-word space                      | Pattern: \W                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-word at                         | Pattern: \W                             | Text: @                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-word letter                     | Pattern: \W                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-word digit                      | Pattern: \W                             | Text: 5                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-word underscore                 | Pattern: \W                             | Text: _                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-word chars special              | Pattern: \W+                            | Text: !@#                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Non-word chars spaces               | Pattern: \W+                            | Text:                           | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Non-word chars letters              | Pattern: \W+                            | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Space space                         | Pattern: \s                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Space tab                           | Pattern: \s                             | Text: 	                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Space newline                       | Pattern: \s                             | Text: 
+                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Space carriage return               | Pattern: \s                             | Text:                          | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Space letter                        | Pattern: \s                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Space digit                         | Pattern: \s                             | Text: 5                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Spaces plus many                    | Pattern: \s+                            | Text:                           | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Spaces plus tabs                    | Pattern: \s+                            | Text: 		                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Spaces plus mixed                   | Pattern: \s+                            | Text:  	
+                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Spaces plus empty                   | Pattern: \s+                            | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Spaces plus letters                 | Pattern: \s+                            | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-space letter                    | Pattern: \S                             | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-space digit                     | Pattern: \S                             | Text: 5                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-space special                   | Pattern: \S                             | Text: !                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Non-space space                     | Pattern: \S                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-space tab                       | Pattern: \S                             | Text: 	                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Non-spaces plus word                | Pattern: \S+                            | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Non-spaces plus digits              | Pattern: \S+                            | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Non-spaces plus spaces              | Pattern: \S+                            | Text:                           | Expected: NO MATCH | Got: NO MATCH
+
+================================================================================
+ESCAPE SEQUENCES - SPECIAL CHARACTERS
+================================================================================
+[SUCCESS] Escaped newline match               | Pattern: \n                             | Text: 
+                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped newline letter              | Pattern: \n                             | Text: n                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped tab match                   | Pattern: \t                             | Text: 	                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped tab letter                  | Pattern: \t                             | Text: t                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped CR match                    | Pattern: \r                             | Text:                          | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped CR letter                   | Pattern: \r                             | Text: r                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped dot literal                 | Pattern: \.                             | Text: .                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped dot not any                 | Pattern: \.                             | Text: x                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped star literal                | Pattern: \*                             | Text: *                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped star not quantifier         | Pattern: \*                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped plus literal                | Pattern: \+                             | Text: +                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped plus not quantifier         | Pattern: \+                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped question literal            | Pattern: \?                             | Text: ?                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped question not quantifier     | Pattern: \?                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped pipe literal                | Pattern: \|                             | Text: |                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped pipe not alternation        | Pattern: \|                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped lparen literal              | Pattern: \(                             | Text: (                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped lparen not group            | Pattern: \(                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped rparen literal              | Pattern: \)                             | Text: )                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped rparen not group            | Pattern: \)                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped lbracket literal            | Pattern: \[                             | Text: [                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped lbracket not class          | Pattern: \[                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped rbracket literal            | Pattern: \]                             | Text: ]                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped rbracket not class          | Pattern: \]                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped backslash literal           | Pattern: \\                             | Text: \                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Escaped backslash not escape        | Pattern: \\                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped dot in pattern              | Pattern: a\.b                           | Text: a.b                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Escaped dot literal only            | Pattern: a\.b                           | Text: axb                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Escaped plus between digits         | Pattern: \d\+\d                         | Text: 5+3                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Escaped parens around digit         | Pattern: \(\d\)                         | Text: (5)                       | Expected: MATCH   | Got: MATCH   [0,3)
+
+================================================================================
+ANCHORS (^ and $)
+================================================================================
+[SUCCESS] Anchor start match                  | Pattern: ^abc                           | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Anchor start prefix                 | Pattern: ^abc                           | Text: abcdef                    | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Anchor start not at beginning       | Pattern: ^abc                           | Text: xabc                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchor start space before           | Pattern: ^abc                           | Text:   abc                     | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchor start word                   | Pattern: ^hello                         | Text: hello world               | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Anchor start later                  | Pattern: ^hello                         | Text: say hello                 | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchor start empty                  | Pattern: ^                              | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Anchor start any                    | Pattern: ^                              | Text: anything                  | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Anchor start single                 | Pattern: ^a                             | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Anchor start wrong char             | Pattern: ^a                             | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchor end exact (prefix match)     | Pattern: abc$                           | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Anchor end not at start             | Pattern: abc$                           | Text: xyzabc                    | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchor end not at start             | Pattern: world$                         | Text: hello world               | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchor end empty (match mode)       | Pattern: $                              | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchor end any (match mode)         | Pattern: $                              | Text: anything                  | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Both anchors exact                  | Pattern: ^abc$                          | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Both anchors extra char (prefix match) | Pattern: ^abc$                          | Text: abcd                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Both anchors wrong start            | Pattern: ^abc$                          | Text: xabc                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Both anchors word                   | Pattern: ^hello$                        | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Both anchors extra (prefix match)   | Pattern: ^hello$                        | Text: hello world               | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchors with dotstar min            | Pattern: ^a.*z$                         | Text: az                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Anchors with dotstar middle         | Pattern: ^a.*z$                         | Text: abcxyz                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Anchors with digits                 | Pattern: ^\d+$                          | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Anchors with digits no match        | Pattern: ^\d+$                          | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchors with class                  | Pattern: ^[a-z]+$                       | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Anchors with class upper            | Pattern: ^[a-z]+$                       | Text: Hello                     | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Start anchor alone                  | Pattern: ^test                          | Text: test                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Start anchor prefix                 | Pattern: ^test                          | Text: testing                   | Expected: MATCH   | Got: MATCH   [0,4)
+
+================================================================================
+QUANTIFIERS {m,n}
+================================================================================
+[SUCCESS] Exact three                         | Pattern: a{3}                           | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Exact three prefix                  | Pattern: a{3}                           | Text: aaaa                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Exact three too few                 | Pattern: a{3}                           | Text: aa                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Exact three only one                | Pattern: a{3}                           | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Exact three empty                   | Pattern: a{3}                           | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Exact zero                          | Pattern: a{0}                           | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Exact zero ignores                  | Pattern: a{0}                           | Text: a                         | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Exact one                           | Pattern: a{1}                           | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Exact one prefix                    | Pattern: a{1}                           | Text: aa                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Exact one empty                     | Pattern: a{1}                           | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Exact five                          | Pattern: a{5}                           | Text: aaaaa                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Exact five prefix                   | Pattern: a{5}                           | Text: aaaaaa                    | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Exact five too few                  | Pattern: a{5}                           | Text: aaaa                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Range min                           | Pattern: a{2,4}                         | Text: aa                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Range middle                        | Pattern: a{2,4}                         | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Range max                           | Pattern: a{2,4}                         | Text: aaaa                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Range over max prefix               | Pattern: a{2,4}                         | Text: aaaaa                     | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Range too few                       | Pattern: a{2,4}                         | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Range empty                         | Pattern: a{2,4}                         | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Range zero min                      | Pattern: a{0,3}                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Range zero min one                  | Pattern: a{0,3}                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range zero min max                  | Pattern: a{0,3}                         | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Range zero min over                 | Pattern: a{0,3}                         | Text: aaaa                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Range one one                       | Pattern: a{1,1}                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range one one prefix                | Pattern: a{1,1}                         | Text: aa                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range one one empty                 | Pattern: a{1,1}                         | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Unbounded min                       | Pattern: a{2,}                          | Text: aa                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Unbounded many                      | Pattern: a{2,}                          | Text: aaaa                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Unbounded lots                      | Pattern: a{2,}                          | Text: aaaaaaaaaa                | Expected: MATCH   | Got: MATCH   [0,10)
+[SUCCESS] Unbounded too few                   | Pattern: a{2,}                          | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Unbounded empty                     | Pattern: a{2,}                          | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Unbounded zero min                  | Pattern: a{0,}                          | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Unbounded zero min many             | Pattern: a{0,}                          | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Digit exact three                   | Pattern: \d{3}                          | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Digit exact three prefix            | Pattern: \d{3}                          | Text: 1234                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Digit exact three too few           | Pattern: \d{3}                          | Text: 12                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Digit range min                     | Pattern: \d{2,4}                        | Text: 12                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Digit range middle                  | Pattern: \d{2,4}                        | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Digit range max                     | Pattern: \d{2,4}                        | Text: 1234                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Digit range over                    | Pattern: \d{2,4}                        | Text: 12345                     | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Digit range too few                 | Pattern: \d{2,4}                        | Text: 1                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Class exact three                   | Pattern: [a-z]{3}                       | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Class exact three prefix            | Pattern: [a-z]{3}                       | Text: abcd                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Class exact three too few           | Pattern: [a-z]{3}                       | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Class unbounded min                 | Pattern: [0-9]{2,}                      | Text: 12                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Class unbounded many                | Pattern: [0-9]{2,}                      | Text: 12345                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Group exact two                     | Pattern: (ab){2}                        | Text: abab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Group exact two prefix              | Pattern: (ab){2}                        | Text: ababab                    | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Group exact two too few             | Pattern: (ab){2}                        | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group range min                     | Pattern: (ab){2,3}                      | Text: abab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Group range max                     | Pattern: (ab){2,3}                      | Text: ababab                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Group range over                    | Pattern: (ab){2,3}                      | Text: abababab                  | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Group range too few                 | Pattern: (ab){2,3}                      | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+
+================================================================================
+CAPTURE GROUPS
+================================================================================
+[SUCCESS] Single group one char               | Pattern: (a)                            | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Single group prefix                 | Pattern: (a)                            | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Single group no match               | Pattern: (a)                            | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Single group multi char             | Pattern: (abc)                          | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Single group prefix                 | Pattern: (abc)                          | Text: abcd                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Single group incomplete             | Pattern: (abc)                          | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two groups                          | Pattern: (a)(b)                         | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two groups prefix                   | Pattern: (a)(b)                         | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two groups incomplete               | Pattern: (a)(b)                         | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Three groups                        | Pattern: (a)(b)(c)                      | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Three groups prefix                 | Pattern: (a)(b)(c)                      | Text: abcd                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group word                          | Pattern: (hello)                        | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Group word prefix                   | Pattern: (hello)                        | Text: hello world               | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Group digits                        | Pattern: (\d+)                          | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group digits prefix                 | Pattern: (\d+)                          | Text: 123abc                    | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group digits no match               | Pattern: (\d+)                          | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group class                         | Pattern: ([a-z]+)                       | Text: hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Group class prefix                  | Pattern: ([a-z]+)                       | Text: hello123                  | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Two groups with plus                | Pattern: (a+)(b+)                       | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Two groups many                     | Pattern: (a+)(b+)                       | Text: aaabbb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Two groups first only               | Pattern: (a+)(b+)                       | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two groups both zero                | Pattern: (a*)(b*)                       | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Two groups first many               | Pattern: (a*)(b*)                       | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Two groups second many              | Pattern: (a*)(b*)                       | Text: bbb                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Two groups both many                | Pattern: (a*)(b*)                       | Text: aaabbb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Group optional then char            | Pattern: (a?)b                          | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group present then char             | Pattern: (a?)b                          | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Group alternation first             | Pattern: (a|b)                          | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group alternation second            | Pattern: (a|b)                          | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group alternation no match          | Pattern: (a|b)                          | Text: c                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group word alternation first        | Pattern: (cat|dog)                      | Text: cat                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group word alternation second       | Pattern: (cat|dog)                      | Text: dog                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Nested groups                       | Pattern: ((a))                          | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Nested groups prefix                | Pattern: ((a))                          | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Nested groups two inner             | Pattern: ((a)(b))                       | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Group with nested                   | Pattern: (a(b)c)                        | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group with nested prefix            | Pattern: (a(b)c)                        | Text: abcd                      | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Nested quantified groups            | Pattern: ((a+)(b+))                     | Text: aaabbb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Groups with quantifiers             | Pattern: (\d{3})-(\d{2})                | Text: 123-45                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Groups quantifiers prefix           | Pattern: (\d{3})-(\d{2})                | Text: 123-456                   | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Groups quantifiers too few          | Pattern: (\d{3})-(\d{2})                | Text: 12-45                     | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Groups email-like                   | Pattern: (\w+)@(\w+)                    | Text: user@domain               | Expected: MATCH   | Got: MATCH   [0,11)
+[SUCCESS] Groups email prefix                 | Pattern: (\w+)@(\w+)                    | Text: user@domain.com           | Expected: MATCH   | Got: MATCH   [0,11)
+[SUCCESS] Many groups                         | Pattern: (a)(b)(c)(d)(e)                | Text: abcde                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Many groups prefix                  | Pattern: (a)(b)(c)(d)(e)                | Text: abcdef                    | Expected: MATCH   | Got: MATCH   [0,5)
+
+================================================================================
+COMPLEX COMBINATIONS
+================================================================================
+[SUCCESS] A dotstar b minimum                 | Pattern: a.*b                           | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] A dotstar b one char                | Pattern: a.*b                           | Text: axb                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] A dotstar b many chars              | Pattern: a.*b                           | Text: axxxxb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] A dotstar b no b                    | Pattern: a.*b                           | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] A dotstar b no a                    | Pattern: a.*b                           | Text: b                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Dotstar empty                       | Pattern: .*                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Dotstar all                         | Pattern: .*                             | Text: anything                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Dotstar mixed                       | Pattern: .*                             | Text: 123!@#xyz                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Plus star combo min                 | Pattern: a+b*c                          | Text: ac                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Plus star combo one each            | Pattern: a+b*c                          | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Plus star combo many                | Pattern: a+b*c                          | Text: aaabbbbc                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Plus star combo no a                | Pattern: a+b*c                          | Text: c                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Star plus combo min                 | Pattern: a*b+c                          | Text: bc                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Star plus combo one each            | Pattern: a*b+c                          | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Star plus combo many                | Pattern: a*b+c                          | Text: aaabbbbc                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Star plus combo no b                | Pattern: a*b+c                          | Text: ac                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group star zero                     | Pattern: (a|b)*                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Group star one first                | Pattern: (a|b)*                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group star one second               | Pattern: (a|b)*                         | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group star alternating              | Pattern: (a|b)*                         | Text: abab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Group star repeated                 | Pattern: (a|b)*                         | Text: aaabbb                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Group star zero then mismatch       | Pattern: (a|b)*                         | Text: c                         | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Group plus one first                | Pattern: (a|b)+                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group plus one second               | Pattern: (a|b)+                         | Text: b                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group plus alternating              | Pattern: (a|b)+                         | Text: abab                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Group plus empty                    | Pattern: (a|b)+                         | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group plus no match                 | Pattern: (a|b)+                         | Text: c                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Email-like basic                    | Pattern: [a-z]+@[a-z]+                  | Text: user@domain               | Expected: MATCH   | Got: MATCH   [0,11)
+[SUCCESS] Email-like test                     | Pattern: [a-z]+@[a-z]+                  | Text: test@example              | Expected: MATCH   | Got: MATCH   [0,12)
+[SUCCESS] Email-like no at                    | Pattern: [a-z]+@[a-z]+                  | Text: user                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Email-like no user                  | Pattern: [a-z]+@[a-z]+                  | Text: @domain                   | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Email with dot                      | Pattern: [a-z]+@[a-z]+\.[a-z]+          | Text: test@example.com          | Expected: MATCH   | Got: MATCH   [0,16)
+[SUCCESS] Email with dot org                  | Pattern: [a-z]+@[a-z]+\.[a-z]+          | Text: user@mail.org             | Expected: MATCH   | Got: MATCH   [0,13)
+[SUCCESS] Email no extension                  | Pattern: [a-z]+@[a-z]+\.[a-z]+          | Text: test@example              | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] IP address valid                    | Pattern: \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} | Text: 192.168.1.1               | Expected: MATCH   | Got: MATCH   [0,11)
+[SUCCESS] IP address short                    | Pattern: \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} | Text: 10.0.0.1                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] IP address incomplete               | Pattern: \d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} | Text: 192.168.1                 | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] URL full                            | Pattern: (https?://)?(www\.)?[a-z]+\.[a-z]+ | Text: http://www.example.com    | Expected: MATCH   | Got: MATCH   [0,22)
+[SUCCESS] URL https no www                    | Pattern: (https?://)?(www\.)?[a-z]+\.[a-z]+ | Text: https://example.com       | Expected: MATCH   | Got: MATCH   [0,19)
+[SUCCESS] URL no protocol                     | Pattern: (https?://)?(www\.)?[a-z]+\.[a-z]+ | Text: www.example.com           | Expected: MATCH   | Got: MATCH   [0,15)
+[SUCCESS] URL minimal                         | Pattern: (https?://)?(www\.)?[a-z]+\.[a-z]+ | Text: example.com               | Expected: MATCH   | Got: MATCH   [0,11)
+[SUCCESS] URL wrong protocol                  | Pattern: (https?://)?(www\.)?[a-z]+\.[a-z]+ | Text: ftp://example.com         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two words space                     | Pattern: \w+\s+\w+                      | Text: hello world               | Expected: MATCH   | Got: MATCH   [0,11)
+[SUCCESS] Two words different                 | Pattern: \w+\s+\w+                      | Text: foo bar                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Two words double space matches      | Pattern: \w+\s+\w+                      | Text: hello  world              | Expected: MATCH   | Got: MATCH   [0,12)
+[SUCCESS] Two words only one                  | Pattern: \w+\s+\w+                      | Text: hello                     | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Words optional space                | Pattern: \w+\s*\w+                      | Text: hello world               | Expected: MATCH   | Got: MATCH   [0,11)
+[SUCCESS] Words no space                      | Pattern: \w+\s*\w+                      | Text: helloworld                | Expected: MATCH   | Got: MATCH   [0,10)
+[SUCCESS] Words multi space                   | Pattern: \w+\s*\w+                      | Text: hello  world              | Expected: MATCH   | Got: MATCH   [0,12)
+[SUCCESS] Anchored digits                     | Pattern: ^\d+$                          | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Anchored digits letters             | Pattern: ^\d+$                          | Text: abc                       | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchored letters mixed              | Pattern: ^[a-zA-Z]+$                    | Text: Hello                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Anchored letters with digits        | Pattern: ^[a-zA-Z]+$                    | Text: Hello123                  | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Group alternation plus first        | Pattern: (a+|b+)                        | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group alternation plus second       | Pattern: (a+|b+)                        | Text: bbb                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Group alternation plus first prefix | Pattern: (a+|b+)                        | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Group alternation plus empty        | Pattern: (a+|b+)                        | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Nested alternation groups first     | Pattern: ((a|b)+|(c|d)+)                | Text: aab                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Nested alternation groups second    | Pattern: ((a|b)+|(c|d)+)                | Text: ccd                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Nested alternation groups no match  | Pattern: ((a|b)+|(c|d)+)                | Text: e                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Two unbounded min                   | Pattern: a{2,}b{2,}                     | Text: aabb                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Two unbounded many                  | Pattern: a{2,}b{2,}                     | Text: aaaabbbb                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Two unbounded too few               | Pattern: a{2,}b{2,}                     | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Email with lengths                  | Pattern: [a-z]{3,}@[a-z]{3,}\.[a-z]{2,} | Text: test@example.com          | Expected: MATCH   | Got: MATCH   [0,16)
+[SUCCESS] Email too short                     | Pattern: [a-z]{3,}@[a-z]{3,}\.[a-z]{2,} | Text: ab@ex.c                   | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Three groups mixed                  | Pattern: (\d+)([a-z]+)(\d+)             | Text: 123abc456                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Three groups incomplete             | Pattern: (\d+)([a-z]+)(\d+)             | Text: 123abc                    | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Anchored group star then c          | Pattern: ^(a|b)*c$                      | Text: c                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Anchored group star many then c     | Pattern: ^(a|b)*c$                      | Text: aac                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Anchored group star mixed then c    | Pattern: ^(a|b)*c$                      | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Anchored group star extra char      | Pattern: ^(a|b)*c$                      | Text: abcd                      | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Tags simple                         | Pattern: <.*>                           | Text: <tag>                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Tags nested greedy                  | Pattern: <.*>                           | Text: <tag>content</tag>        | Expected: MATCH   | Got: MATCH   [0,18)
+[SUCCESS] Tags no close                       | Pattern: <.*>                           | Text: <                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] File extension                      | Pattern: .*\.txt                        | Text: file.txt                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] File extension long                 | Pattern: .*\.txt                        | Text: document.txt              | Expected: MATCH   | Got: MATCH   [0,12)
+[SUCCESS] File extension wrong                | Pattern: .*\.txt                        | Text: file.doc                  | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Python example empty                | Pattern: (lo)*l*                        | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Python example lo                   | Pattern: (lo)*l*                        | Text: lo                        | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Python example lol                  | Pattern: (lo)*l*                        | Text: lol                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Python example lolll                | Pattern: (lo)*l*                        | Text: lolll                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Python example lolol                | Pattern: (lo)*l*                        | Text: lolol                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Python example looool prefix lo     | Pattern: (lo)*l*                        | Text: looool                    | Expected: MATCH   | Got: MATCH   [0,2)
+[SUCCESS] Python example olll empty match     | Pattern: (lo)*l*                        | Text: olll                      | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Python example lolololll            | Pattern: (lo)*l*                        | Text: lolololll                 | Expected: MATCH   | Got: MATCH   [0,9)
+
+================================================================================
+EDGE CASES AND SPECIAL PATTERNS
+================================================================================
+[SUCCESS] Empty pattern empty text            | Pattern:                                | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Empty pattern non-empty text        | Pattern:                                | Text: a                         | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Non-empty pattern empty text        | Pattern: a                              | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Star zero empty                     | Pattern: a*                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Plus requires one                   | Pattern: a+                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Question zero empty                 | Pattern: a?                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Alternation star zero               | Pattern: (a|b)*                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Alternation plus requires one       | Pattern: (a|b)+                         | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Dotstar empty                       | Pattern: .*                             | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Dotstar with newline                | Pattern: .*                             | Text: 
+                         | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Dotplus empty                       | Pattern: .+                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Zero quantifier                     | Pattern: a{0}                           | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Zero quantifier with text           | Pattern: a{0}                           | Text: a                         | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Zero range                          | Pattern: a{0,0}                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Unbounded from zero empty           | Pattern: a{0,}                          | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Unbounded from zero many            | Pattern: a{0,}                          | Text: aaaa                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Both anchors empty (match mode)     | Pattern: ^$                             | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Both anchors non-empty              | Pattern: ^$                             | Text: a                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Double start anchor                 | Pattern: ^^a                            | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Double end anchor                   | Pattern: a$$                            | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Nested star zero                    | Pattern: (a*)*                          | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Nested star many                    | Pattern: (a*)*                          | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Nested plus one                     | Pattern: (a+)+                          | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Nested plus many                    | Pattern: (a+)+                          | Text: aaa                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Nested plus empty                   | Pattern: (a+)+                          | Text:                           | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Single char range                   | Pattern: [a-a]                          | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Single char range z                 | Pattern: [z-z]                          | Text: z                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Single digit range                  | Pattern: [0-0]                          | Text: 0                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Two class stars empty               | Pattern: [a-z]*[A-Z]*                   | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Two class stars first               | Pattern: [a-z]*[A-Z]*                   | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Two class stars second              | Pattern: [a-z]*[A-Z]*                   | Text: ABC                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Two class stars both                | Pattern: [a-z]*[A-Z]*                   | Text: abcABC                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Two shorthand stars empty           | Pattern: \d*\w*                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Two shorthand stars digits          | Pattern: \d*\w*                         | Text: 123                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Two shorthand stars word            | Pattern: \d*\w*                         | Text: abc                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Two shorthand stars both            | Pattern: \d*\w*                         | Text: 123abc                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Many nested groups                  | Pattern: ((((a))))                      | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Many nested groups prefix           | Pattern: ((((a))))                      | Text: ab                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range 1 to 1                        | Pattern: a{1,1}                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range 1 to 1 prefix                 | Pattern: a{1,1}                         | Text: aa                        | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Range 0 to 1 zero                   | Pattern: a{0,1}                         | Text:                           | Expected: MATCH   | Got: MATCH   [0,0)
+[SUCCESS] Range 0 to 1 one                    | Pattern: a{0,1}                         | Text: a                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Class with dash at end              | Pattern: [a-z-]                         | Text: -                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Class with dash at start            | Pattern: [-a-z]                         | Text: -                         | Expected: MATCH   | Got: MATCH   [0,1)
+[SUCCESS] Class with escaped dash             | Pattern: [a\-z]                         | Text: -                         | Expected: MATCH   | Got: MATCH   [0,1)
+
+================================================================================
+REAL-WORLD PATTERNS
+================================================================================
+[SUCCESS] Phone US format                     | Pattern: \d{3}-\d{3}-\d{4}              | Text: 123-456-7890              | Expected: MATCH   | Got: MATCH   [0,12)
+[SUCCESS] Phone too short                     | Pattern: \d{3}-\d{3}-\d{4}              | Text: 123-456-789               | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Phone with parens                   | Pattern: \(\d{3}\)\s*\d{3}-\d{4}        | Text: (123) 456-7890            | Expected: MATCH   | Got: MATCH   [0,14)
+[SUCCESS] Phone no space                      | Pattern: \(\d{3}\)\s*\d{3}-\d{4}        | Text: (123)456-7890             | Expected: MATCH   | Got: MATCH   [0,13)
+[SUCCESS] Date MM/DD/YYYY                     | Pattern: \d{2}/\d{2}/\d{4}              | Text: 12/31/2023                | Expected: MATCH   | Got: MATCH   [0,10)
+[SUCCESS] Date single digits                  | Pattern: \d{2}/\d{2}/\d{4}              | Text: 1/1/2023                  | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Date ISO format                     | Pattern: \d{4}-\d{2}-\d{2}              | Text: 2023-12-31                | Expected: MATCH   | Got: MATCH   [0,10)
+[SUCCESS] Date flexible                       | Pattern: \d{1,2}/\d{1,2}/\d{4}          | Text: 1/1/2023                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Time 24h                            | Pattern: \d{2}:\d{2}                    | Text: 14:30                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Time with seconds                   | Pattern: \d{2}:\d{2}:\d{2}              | Text: 14:30:45                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Time flexible hour                  | Pattern: \d{1,2}:\d{2}                  | Text: 9:30                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Hex color                           | Pattern: #[0-9a-fA-F]{6}                | Text: #FF5733                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Hex color lowercase                 | Pattern: #[0-9a-fA-F]{6}                | Text: #ff5733                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Hex color invalid                   | Pattern: #[0-9a-fA-F]{6}                | Text: #FG5733                   | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Hex number prefix                   | Pattern: 0[xX][0-9a-fA-F]+              | Text: 0xFF                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] Hex number long                     | Pattern: 0[xX][0-9a-fA-F]+              | Text: 0x1a2b                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Version semver                      | Pattern: \d+\.\d+\.\d+                  | Text: 1.2.3                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Version double digits               | Pattern: \d+\.\d+\.\d+                  | Text: 10.20.30                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Version major.minor                 | Pattern: \d+\.\d+                       | Text: 1.2                       | Expected: MATCH   | Got: MATCH   [0,3)
+[SUCCESS] Text file                           | Pattern: .*\.txt                        | Text: file.txt                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] JPG file                            | Pattern: .*\.jpg                        | Text: image.jpg                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Doc file types                      | Pattern: .*\.(txt|md|doc)               | Text: readme.md                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Doc wrong type                      | Pattern: .*\.(txt|md|doc)               | Text: file.pdf                  | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Username valid                      | Pattern: [a-z][a-z0-9_]{2,15}           | Text: user123                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Username with underscore            | Pattern: [a-z][a-z0-9_]{2,15}           | Text: test_user                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Username too short                  | Pattern: [a-z][a-z0-9_]{2,15}           | Text: ab                        | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Username starts with digit          | Pattern: [a-z][a-z0-9_]{2,15}           | Text: 123user                   | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Hashtag simple                      | Pattern: #[a-zA-Z0-9_]+                 | Text: #coding                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Hashtag with underscore             | Pattern: #[a-zA-Z0-9_]+                 | Text: #test_123                 | Expected: MATCH   | Got: MATCH   [0,9)
+[SUCCESS] Hashtag empty                       | Pattern: #[a-zA-Z0-9_]+                 | Text: #                         | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] Currency with cents                 | Pattern: \$\d+\.\d{2}                   | Text: $10.99                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Currency round                      | Pattern: \$\d+\.\d{2}                   | Text: $5.00                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Currency no cents                   | Pattern: \$\d+                          | Text: $100                      | Expected: MATCH   | Got: MATCH   [0,4)
+[SUCCESS] HTML opening tag                    | Pattern: <[a-z]+>                       | Text: <div>                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] HTML span tag                       | Pattern: <[a-z]+>                       | Text: <span>                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] HTML closing tag                    | Pattern: </[a-z]+>                      | Text: </div>                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Markdown bold                       | Pattern: \*\*.*\*\*                     | Text: **bold**                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Markdown italic                     | Pattern: __.*__                         | Text: __italic__                | Expected: MATCH   | Got: MATCH   [0,10)
+[SUCCESS] Log level info                      | Pattern: \[(INFO|WARN|ERROR)\]          | Text: [INFO]                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Log level error                     | Pattern: \[(INFO|WARN|ERROR)\]          | Text: [ERROR]                   | Expected: MATCH   | Got: MATCH   [0,7)
+[SUCCESS] Log level invalid                   | Pattern: \[(INFO|WARN|ERROR)\]          | Text: [DEBUG]                   | Expected: NO MATCH | Got: NO MATCH
+[SUCCESS] SQL select                          | Pattern: SELECT \* FROM \w+             | Text: SELECT * FROM users       | Expected: MATCH   | Got: MATCH   [0,19)
+[SUCCESS] SQL insert                          | Pattern: INSERT INTO \w+                | Text: INSERT INTO table         | Expected: MATCH   | Got: MATCH   [0,17)
+[SUCCESS] Variable camelCase                  | Pattern: [a-zA-Z_][a-zA-Z0-9_]*         | Text: myVar                     | Expected: MATCH   | Got: MATCH   [0,5)
+[SUCCESS] Variable snake_case                 | Pattern: [a-zA-Z_][a-zA-Z0-9_]*         | Text: my_var                    | Expected: MATCH   | Got: MATCH   [0,6)
+[SUCCESS] Variable private                    | Pattern: [a-zA-Z_][a-zA-Z0-9_]*         | Text: _private                  | Expected: MATCH   | Got: MATCH   [0,8)
+[SUCCESS] Variable starts digit               | Pattern: [a-zA-Z_][a-zA-Z0-9_]*         | Text: 123var                    | Expected: NO MATCH | Got: NO MATCH
+
+================================================================================
+TEST SUMMARY
+================================================================================
+Total tests:  650
+Passed:       650 (100.0%)
+Failed:       0 (0.0%)
+Execution:    21 ms
+================================================================================

@@ -1,10 +1,10 @@
 #include "NfaMatcher.hpp"
-#include <algorithm>
+#include "pz_cxx_std.hpp"
 
 NfaMatcher::NfaMatcher(State *start_state) : start(start_state) {}
 
-// Check if a character matches a state's matching condition
-bool NfaMatcher::state_matches(State *state, char c) {
+// Check if a ut8acter matches a state's matching condition
+bool NfaMatcher::state_matches(State *state, ut8 c) {
   switch (state->type) {
   case StateType::CHAR:
     return state->c == c;
@@ -31,13 +31,13 @@ bool NfaMatcher::state_matches(State *state, char c) {
 // Follow epsilon transitions from a single state, collecting all reachable
 // states
 void NfaMatcher::follow_epsilons(State *state, std::set<State *> &result_set,
-                                 std::vector<int> &captures, bool at_start,
+                                 std::vector<st32> &captures, bool at_start,
                                  bool at_end) {
   if (!state || result_set.count(state)) {
     return; // Already visited or null
   }
 
-  // Check anchor constraints
+  // Check anchor constrast32s
   if (state->type == StateType::ANCHOR_START && !at_start) {
     return; // ^ anchor failed
   }
@@ -49,8 +49,8 @@ void NfaMatcher::follow_epsilons(State *state, std::set<State *> &result_set,
 
   // Handle SAVE states (capture group boundaries)
   if (state->type == StateType::SAVE) {
-    int save_id = state->save_id;
-    if (save_id >= 0 && save_id < (int)captures.size()) {
+    st32 save_id = state->save_id;
+    if (save_id >= 0 && save_id < (st32)captures.size()) {
       // Don't overwrite if already set in this path
       // This simple strategy takes the first match (greedy)
     }
@@ -75,7 +75,7 @@ void NfaMatcher::follow_epsilons(State *state, std::set<State *> &result_set,
 // Get all states reachable via epsilon transitions from a set of states
 std::set<State *>
 NfaMatcher::follow_epsilons_from_set(const std::set<State *> &states,
-                                     std::vector<int> &captures, bool at_start,
+                                     std::vector<st32> &captures, bool at_start,
                                      bool at_end) {
   std::set<State *> result;
   for (State *state : states) {
@@ -84,16 +84,16 @@ NfaMatcher::follow_epsilons_from_set(const std::set<State *> &states,
   return result;
 }
 
-// Get next states after consuming a character
+// Get next states after consuming a ut8acter
 std::set<State *>
-NfaMatcher::get_next_states(const std::set<State *> &current_states, char c,
-                            std::vector<int> &captures, bool at_start,
+NfaMatcher::get_next_states(const std::set<State *> &current_states, ut8 c,
+                            std::vector<st32> &captures, bool at_start,
                             bool at_end) {
   std::set<State *> next_states;
 
   for (State *state : current_states) {
     if (state_matches(state, c)) {
-      // This state matches the character, follow its transition
+      // This state matches the ut8acter, follow its transition
       if (state->out) {
         follow_epsilons(state->out, next_states, captures, at_start, at_end);
       }
@@ -105,12 +105,12 @@ NfaMatcher::get_next_states(const std::set<State *> &current_states, char c,
 
 // Internal matching function
 MatchResult NfaMatcher::match_internal(const std::string_view &text,
-                                       int start_pos, bool anchored_start,
+                                       st32 start_pos, bool anchored_start,
                                        bool anchored_end) {
-  MatchResult result;
+  MatchResult result(false, -1, -1, {{-1, -1}});
 
   // Initialize captures for potential groups (allocate enough space)
-  std::vector<int> captures(100, -1); // Support up to 50 groups
+  std::vector<st32> captures(100, -1); // Support up to 50 groups
 
   // Start with epsilon closure of start state
   std::set<State *> current_states;
@@ -118,10 +118,10 @@ MatchResult NfaMatcher::match_internal(const std::string_view &text,
   follow_epsilons(start, current_states, captures, at_text_start, false);
 
   // Track positions where we've seen MATCH state
-  int match_end = -1;
-  std::vector<int> best_captures;
+  st32 match_end = -1;
+  std::vector<st32> best_captures;
 
-  // Check if we can match at the empty string (before consuming any characters)
+  // Check if we can match at the empty string (before consuming any ut8acters)
   for (State *state : current_states) {
     if (state->type == StateType::MATCH) {
       match_end = start_pos;
@@ -129,7 +129,7 @@ MatchResult NfaMatcher::match_internal(const std::string_view &text,
       if (anchored_end) {
         // For fullmatch, we need to consume the entire string
         // So empty match only works if text is empty from start_pos
-        if (start_pos >= (int)text.size()) {
+        if (start_pos >= (st32)text.size()) {
           result.matched = true;
           result.start_pos = start_pos;
           result.end_pos = start_pos;
@@ -145,12 +145,12 @@ MatchResult NfaMatcher::match_internal(const std::string_view &text,
     }
   }
 
-  // Process each character
-  for (int i = start_pos; i < (int)text.size(); i++) {
-    char c = text[i];
-    bool at_end = (i + 1 == (int)text.size());
+  // Process each ut8acter
+  for (st32 i = start_pos; i < (st32)text.size(); i++) {
+    ut8 c = text[i];
+    bool at_end = (i + 1 == (st32)text.size());
 
-    // Get next states after consuming this character
+    // Get next states after consuming this ut8acter
     std::set<State *> next_states =
         get_next_states(current_states, c, captures, false, at_end);
 
@@ -163,9 +163,9 @@ MatchResult NfaMatcher::match_internal(const std::string_view &text,
     // Update SAVE states with current position
     for (State *state : current_states) {
       if (state->type == StateType::SAVE) {
-        int save_id = state->save_id;
-        if (save_id >= 0 && save_id < (int)captures.size()) {
-          captures[save_id] = i + 1; // Position after current character
+        st32 save_id = state->save_id;
+        if (save_id >= 0 && save_id < (st32)captures.size()) {
+          captures[save_id] = i + 1; // Position after current ut8acter
         }
       }
     }
@@ -180,10 +180,10 @@ MatchResult NfaMatcher::match_internal(const std::string_view &text,
     }
   }
 
-  // After consuming all characters, check for match at end
+  // After consuming all ut8acters, check for match at end
   if (match_end >= 0) {
     // For anchored_end (fullmatch), verify we consumed everything
-    if (anchored_end && match_end != (int)text.size()) {
+    if (anchored_end && match_end != (st32)text.size()) {
       result.matched = false;
       return result;
     }
@@ -215,14 +215,14 @@ MatchResult NfaMatcher::match(const std::string_view &text) {
 // left to right
 std::vector<MatchResult> NfaMatcher::find_all(const std::string_view &text) {
   std::vector<MatchResult> matches;
-  int pos = 0;
+  st32 pos = 0;
 
-  while (pos <= (int)text.size()) {
+  while (pos <= (st32)text.size()) {
     // Try to find a match starting at each position
-    MatchResult result;
+    MatchResult result(false, -1, -1, {{-1, -1}});
 
     // Initialize captures for potential groups
-    std::vector<int> captures(100, -1);
+    std::vector<st32> captures(100, -1);
 
     // Start with epsilon closure of start state
     std::set<State *> current_states;
@@ -230,8 +230,8 @@ std::vector<MatchResult> NfaMatcher::find_all(const std::string_view &text) {
     follow_epsilons(start, current_states, captures, at_text_start, false);
 
     // Track best match found from this position
-    int best_match_end = -1;
-    std::vector<int> best_captures;
+    st32 best_match_end = -1;
+    std::vector<st32> best_captures;
 
     // Check if we can match at the empty string
     for (State *state : current_states) {
@@ -242,12 +242,12 @@ std::vector<MatchResult> NfaMatcher::find_all(const std::string_view &text) {
       }
     }
 
-    // Process each character from this starting position
-    for (int i = pos; i < (int)text.size(); i++) {
-      char c = text[i];
-      bool at_end = (i + 1 == (int)text.size());
+    // Process each ut8acter from this starting position
+    for (st32 i = pos; i < (st32)text.size(); i++) {
+      ut8 c = text[i];
+      bool at_end = (i + 1 == (st32)text.size());
 
-      // Get next states after consuming this character
+      // Get next states after consuming this ut8acter
       std::set<State *> next_states =
           get_next_states(current_states, c, captures, false, at_end);
 
@@ -260,8 +260,8 @@ std::vector<MatchResult> NfaMatcher::find_all(const std::string_view &text) {
       // Update SAVE states with current position
       for (State *state : current_states) {
         if (state->type == StateType::SAVE) {
-          int save_id = state->save_id;
-          if (save_id >= 0 && save_id < (int)captures.size()) {
+          st32 save_id = state->save_id;
+          if (save_id >= 0 && save_id < (st32)captures.size()) {
             captures[save_id] = i + 1;
           }
         }
@@ -309,14 +309,14 @@ std::vector<MatchResult> NfaMatcher::find_all(const std::string_view &text) {
   return matches;
 }
 
-// Escape special regex characters in a string
+// Escape special regex ut8acters in a string
 // Similar to Python's re.escape() function
 std::string NfaMatcher::escape(const std::string_view &text) {
   std::string result;
   result.reserve(text.size() * 2); // Reserve space to avoid reallocations
 
-  for (char c : text) {
-    // Check if character is a regex metacharacter
+  for (ut8 c : text) {
+    // Check if ut8acter is a regex metaut8acter
     switch (c) {
     // Operators
     case '.':
@@ -337,7 +337,7 @@ std::string NfaMatcher::escape(const std::string_view &text) {
     case '^':
     case '$':
 
-    // Escape character
+    // Escape ut8acter
     case '\\':
 
     // Character class special

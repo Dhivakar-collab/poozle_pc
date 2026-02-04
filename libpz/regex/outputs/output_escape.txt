@@ -1,0 +1,198 @@
+
+================================================================================
+ESCAPE FUNCTION TESTS (Similar to Python's re.escape())
+================================================================================
+
+[SUCCESS] Escape dot                               | Input: .                              | Expected: \.                             | Got: \.
+[SUCCESS] Escape star                              | Input: *                              | Expected: \*                             | Got: \*
+[SUCCESS] Escape plus                              | Input: +                              | Expected: \+                             | Got: \+
+[SUCCESS] Escape question                          | Input: ?                              | Expected: \?                             | Got: \?
+[SUCCESS] Escape pipe                              | Input: |                              | Expected: \|                             | Got: \|
+[SUCCESS] Escape caret                             | Input: ^                              | Expected: \^                             | Got: \^
+[SUCCESS] Escape dollar                            | Input: $                              | Expected: \$                             | Got: \$
+[SUCCESS] Escape backslash                         | Input: \                              | Expected: \\                             | Got: \\
+[SUCCESS] Escape left paren                        | Input: (                              | Expected: \(                             | Got: \(
+[SUCCESS] Escape right paren                       | Input: )                              | Expected: \)                             | Got: \)
+[SUCCESS] Escape left bracket                      | Input: [                              | Expected: \[                             | Got: \[
+[SUCCESS] Escape right bracket                     | Input: ]                              | Expected: \]                             | Got: \]
+[SUCCESS] Escape left brace                        | Input: {                              | Expected: \{                             | Got: \{
+[SUCCESS] Escape right brace                       | Input: }                              | Expected: \}                             | Got: \}
+[SUCCESS] Escape dash                              | Input: -                              | Expected: \-                             | Got: \-
+[SUCCESS] Plain text - no escape needed            | Input: abc                            | Expected: abc                            | Got: abc
+[SUCCESS] Plain text - hello                       | Input: hello                          | Expected: hello                          | Got: hello
+[SUCCESS] Numbers - no escape needed               | Input: 123                            | Expected: 123                            | Got: 123
+[SUCCESS] Underscore - no escape needed            | Input: _test                          | Expected: _test                          | Got: _test
+[SUCCESS] Empty string                             | Input:                                | Expected:                                | Got: 
+[SUCCESS] Alphanumeric with underscore             | Input: test_123                       | Expected: test_123                       | Got: test_123
+[SUCCESS] Text with space                          | Input: Hello World                    | Expected: Hello World                    | Got: Hello World
+[SUCCESS] Escape in middle                         | Input: a.b                            | Expected: a\.b                           | Got: a\.b
+[SUCCESS] Escape dot star                          | Input: .*                             | Expected: \.\*                           | Got: \.\*
+[SUCCESS] Escape plus in middle                    | Input: a+b                            | Expected: a\+b                           | Got: a\+b
+[SUCCESS] Escape parens                            | Input: (abc)                          | Expected: \(abc\)                        | Got: \(abc\)
+[SUCCESS] Escape char class                        | Input: [a-z]                          | Expected: \[a\-z\]                       | Got: \[a\-z\]
+[SUCCESS] Escape braces                            | Input: {1,3}                          | Expected: \{1,3\}                        | Got: \{1,3\}
+[SUCCESS] Escape anchors                           | Input: ^start$                        | Expected: \^start\$                      | Got: \^start\$
+[SUCCESS] Escape pipes                             | Input: a|b|c                          | Expected: a\|b\|c                        | Got: a\|b\|c
+[SUCCESS] Escape complex pattern                   | Input: (a+|b*)?                       | Expected: \(a\+\|b\*\)\?                 | Got: \(a\+\|b\*\)\?
+[SUCCESS] Escape digit pattern                     | Input: [0-9]+                         | Expected: \[0\-9\]\+                     | Got: \[0\-9\]\+
+[SUCCESS] Escape file pattern                      | Input: .*\.txt$                       | Expected: \.\*\\\.txt\$                  | Got: \.\*\\\.txt\$
+[SUCCESS] Escape quantifier                        | Input: \d{2,4}                        | Expected: \\d\{2,4\}                     | Got: \\d\{2,4\}
+[SUCCESS] Escape full pattern                      | Input: ^[A-Z].*[a-z]$                 | Expected: \^\[A\-Z\]\.\*\[a\-z\]\$       | Got: \^\[A\-Z\]\.\*\[a\-z\]\$
+[SUCCESS] Escape IP address                        | Input: 192.168.1.1                    | Expected: 192\.168\.1\.1                 | Got: 192\.168\.1\.1
+[SUCCESS] Escape filename                          | Input: file.txt                       | Expected: file\.txt                      | Got: file\.txt
+[SUCCESS] Escape price                             | Input: $100                           | Expected: \$100                          | Got: \$100
+[SUCCESS] Escape phone                             | Input: (555) 123-4567                 | Expected: \(555\) 123\-4567              | Got: \(555\) 123\-4567
+[SUCCESS] Escape email                             | Input: user@domain.com                | Expected: user@domain\.com               | Got: user@domain\.com
+[SUCCESS] Escape Windows path                      | Input: C:\Users\test                  | Expected: C:\\Users\\test                | Got: C:\\Users\\test
+[SUCCESS] Escape array index                       | Input: a[0]                           | Expected: a\[0\]                         | Got: a\[0\]
+[SUCCESS] No special chars - key=value             | Input: key=value                      | Expected: key=value                      | Got: key=value
+[SUCCESS] Escape wildcards                         | Input: *.*                            | Expected: \*\.\*                         | Got: \*\.\*
+[SUCCESS] Escape double star                       | Input: a**b                           | Expected: a\*\*b                         | Got: a\*\*b
+[SUCCESS] Multiple dots                            | Input: .....                          | Expected: \.\.\.\.\.                     | Got: \.\.\.\.\.
+[SUCCESS] Nested parens                            | Input: ((()))                         | Expected: \(\(\(\)\)\)                   | Got: \(\(\(\)\)\)
+[SUCCESS] Multiple pipes                           | Input: |||                            | Expected: \|\|\|                         | Got: \|\|\|
+[SUCCESS] Multiple brackets                        | Input: [[[                            | Expected: \[\[\[                         | Got: \[\[\[
+[SUCCESS] Multiple stars                           | Input: ***                            | Expected: \*\*\*                         | Got: \*\*\*
+[SUCCESS] Multiple plus                            | Input: +++                            | Expected: \+\+\+                         | Got: \+\+\+
+[SUCCESS] Multiple questions                       | Input: ???                            | Expected: \?\?\?                         | Got: \?\?\?
+[SUCCESS] Multiple dollars                         | Input: $$$                            | Expected: \$\$\$                         | Got: \$\$\$
+[SUCCESS] Multiple carets                          | Input: ^^^                            | Expected: \^\^\^                         | Got: \^\^\^
+[SUCCESS] Multiple dashes                          | Input: ---                            | Expected: \-\-\-                         | Got: \-\-\-
+[SUCCESS] Python file                              | Input: test.py                        | Expected: test\.py                       | Got: test\.py
+[SUCCESS] Markdown file                            | Input: README.md                      | Expected: README\.md                     | Got: README\.md
+[SUCCESS] Math expression                          | Input: 2+2=4                          | Expected: 2\+2=4                         | Got: 2\+2=4
+[SUCCESS] Percentage                               | Input: 100% certain                   | Expected: 100% certain                   | Got: 100% certain
+[SUCCESS] Cost with dollar                         | Input: cost: $50                      | Expected: cost: \$50                     | Got: cost: \$50
+[SUCCESS] Option with parens                       | Input: option (a)                     | Expected: option \(a\)                   | Got: option \(a\)
+[SUCCESS] Range with brackets                      | Input: range [1-10]                   | Expected: range \[1\-10\]                | Got: range \[1\-10\]
+[SUCCESS] Escape word pattern                      | Input: \w+                            | Expected: \\w\+                          | Got: \\w\+
+[SUCCESS] Escape digit pattern                     | Input: \d+                            | Expected: \\d\+                          | Got: \\d\+
+[SUCCESS] Escape space pattern                     | Input: \s*                            | Expected: \\s\*                          | Got: \\s\*
+[SUCCESS] Escape alphanum class                    | Input: [a-zA-Z0-9]                    | Expected: \[a\-zA\-Z0\-9\]               | Got: \[a\-zA\-Z0\-9\]
+[SUCCESS] HTTP URL                                 | Input: http://example.com             | Expected: http://example\.com            | Got: http://example\.com
+[SUCCESS] HTTPS URL with query                     | Input: https://test.org/path?query=1  | Expected: https://test\.org/path\?query=1 | Got: https://test\.org/path\?query=1
+[SUCCESS] FTP URL                                  | Input: ftp://server.net               | Expected: ftp://server\.net              | Got: ftp://server\.net
+[SUCCESS] If statement                             | Input: if (x > 0)                     | Expected: if \(x > 0\)                   | Got: if \(x > 0\)
+[SUCCESS] Array increment                          | Input: arr[i++]                       | Expected: arr\[i\+\+\]                   | Got: arr\[i\+\+\]
+[SUCCESS] Function call                            | Input: func(a, b)                     | Expected: func\(a, b\)                   | Got: func\(a, b\)
+[SUCCESS] Math expression                          | Input: x * y + z                      | Expected: x \* y \+ z                    | Got: x \* y \+ z
+[SUCCESS] Non-greedy wildcard                      | Input: .*?                            | Expected: \.\*\?                         | Got: \.\*\?
+[SUCCESS] Non-greedy plus                          | Input: .+?                            | Expected: \.\+\?                         | Got: \.\+\?
+[SUCCESS] Non-capturing group                      | Input: ((?:abc)+)                     | Expected: \(\(\?:abc\)\+\)               | Got: \(\(\?:abc\)\+\)
+[SUCCESS] Word boundary pattern                    | Input: \b\w+\b                        | Expected: \\b\\w\+\\b                    | Got: \\b\\w\+\\b
+[SUCCESS] Single space                             | Input:                                | Expected:                                | Got:  
+[SUCCESS] Double space                             | Input:                                | Expected:                                | Got:   
+[SUCCESS] Tab character                            | Input: 	                              | Expected: 	                              | Got: 	
+[SUCCESS] Newline character                        | Input: 
+                              | Expected: 
+                              | Got: 
+
+[SUCCESS] Tab and newline                          | Input: a	b
+c                          | Expected: a	b
+c                          | Got: a	b
+c
+[SUCCESS] Many dots                                | Input: .........                      | Expected: \.\.\.\.\.\.\.\.\.             | Got: \.\.\.\.\.\.\.\.\.
+[SUCCESS] Many opening parens                      | Input: (((((                          | Expected: \(\(\(\(\(                     | Got: \(\(\(\(\(
+[SUCCESS] Many closing parens                      | Input: )))))                          | Expected: \)\)\)\)\)                     | Got: \)\)\)\)\)
+[SUCCESS] Complex regex pattern                    | Input: ^(test|demo)[0-9]+$            | Expected: \^\(test\|demo\)\[0\-9\]\+\$   | Got: \^\(test\|demo\)\[0\-9\]\+\$
+[SUCCESS] File glob pattern                        | Input: *.{txt,pdf}                    | Expected: \*\.\{txt,pdf\}                | Got: \*\.\{txt,pdf\}
+[SUCCESS] Host with port                           | Input: user@host.com:8080             | Expected: user@host\.com:8080            | Got: user@host\.com:8080
+[SUCCESS] All metacharacters together              | Input: .|*+?()[]{}^$\-                | Expected: \.\|\*\+\?\(\)\[\]\{\}\^\$\\\- | Got: \.\|\*\+\?\(\)\[\]\{\}\^\$\\\-
+[SUCCESS] Deeply nested specials                   | Input: ((([[{{**++??}}]])))           | Expected: \(\(\(\[\[\{\{\*\*\+\+\?\?\}\}\]\]\)\)\) | Got: \(\(\(\[\[\{\{\*\*\+\+\?\?\}\}\]\]\)\)\)
+[SUCCESS] Alternating meta and text                | Input: .a*b+c?d|e^f$g(h)i[j]k{l}m\n-o | Expected: \.a\*b\+c\?d\|e\^f\$g\(h\)i\[j\]k\{l\}m\\n\-o | Got: \.a\*b\+c\?d\|e\^f\$g\(h\)i\[j\]k\{l\}m\\n\-o
+[SUCCESS] 21 dots                                  | Input: .....................          | Expected: \.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\. | Got: \.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.
+[SUCCESS] 20 stars                                 | Input: ********************           | Expected: \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\* | Got: \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+[SUCCESS] 20 pluses                                | Input: ++++++++++++++++++++           | Expected: \+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+ | Got: \+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+\+
+[SUCCESS] 20 pipes                                 | Input: ||||||||||||||||||||           | Expected: \|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\| | Got: \|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|\|
+[SUCCESS] 20 left parens                           | Input: ((((((((((((((((((((           | Expected: \(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\( | Got: \(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(\(
+[SUCCESS] 18 right parens                          | Input: ))))))))))))))))))             | Expected: \)\)\)\)\)\)\)\)\)\)\)\)\)\)\)\)\)\) | Got: \)\)\)\)\)\)\)\)\)\)\)\)\)\)\)\)\)\)
+[SUCCESS] IPv4 non-capturing regex                 | Input: (?:(?:[0-9]{1,3}\.){3}[0-9]{1,3}) | Expected: \(\?:\(\?:\[0\-9\]\{1,3\}\\\.\)\{3\}\[0\-9\]\{1,3\}\) | Got: \(\?:\(\?:\[0\-9\]\{1,3\}\\\.\)\{3\}\[0\-9\]\{1,3\}\)
+[SUCCESS] Password strength regex                  | Input: ^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$ | Expected: \^\(\?=\.\*\[A\-Z\]\)\(\?=\.\*\[a\-z\]\)\(\?=\.\*\[0\-9\]\)\(\?=\.\*\[!@#\$%\^&\*\]\)\.\{8,\}\$ | Got: \^\(\?=\.\*\[A\-Z\]\)\(\?=\.\*\[a\-z\]\)\(\?=\.\*\[0\-9\]\)\(\?=\.\*\[!@#\$%\^&\*\]\)\.\{8,\}\$
+[SUCCESS] Email validation regex                   | Input: ([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}) | Expected: \(\[a\-zA\-Z0\-9\._%\-\]\+@\[a\-zA\-Z0\-9\.\-\]\+\\\.\[a\-zA\-Z\]\{2,\}\) | Got: \(\[a\-zA\-Z0\-9\._%\-\]\+@\[a\-zA\-Z0\-9\.\-\]\+\\\.\[a\-zA\-Z\]\{2,\}\)
+[SUCCESS] URL matching regex                       | Input: \b(https?|ftp)://[^\s/$.?#].[^\s]*\b | Expected: \\b\(https\?\|ftp\)://\[\^\\s/\$\.\?#\]\.\[\^\\s\]\*\\b | Got: \\b\(https\?\|ftp\)://\[\^\\s/\$\.\?#\]\.\[\^\\s\]\*\\b
+[SUCCESS] SQL injection 1                          | Input: '; DROP TABLE users; --        | Expected: '; DROP TABLE users; \-\-      | Got: '; DROP TABLE users; \-\-
+[SUCCESS] SQL injection 2                          | Input: 1' OR '1'='1                   | Expected: 1' OR '1'='1                   | Got: 1' OR '1'='1
+[SUCCESS] SQL injection 3                          | Input: admin'--                       | Expected: admin'\-\-                     | Got: admin'\-\-
+[SUCCESS] Shell injection 1                        | Input: ; rm -rf /                     | Expected: ; rm \-rf /                    | Got: ; rm \-rf /
+[SUCCESS] Shell injection 2                        | Input: | cat /etc/passwd              | Expected: \| cat /etc/passwd             | Got: \| cat /etc/passwd
+[SUCCESS] Shell injection 3                        | Input: && echo 'hacked'               | Expected: && echo 'hacked'               | Got: && echo 'hacked'
+[SUCCESS] Backtick injection                       | Input: `whoami`                       | Expected: `whoami`                       | Got: `whoami`
+[SUCCESS] Command substitution                     | Input: $(command)                     | Expected: \$\(command\)                  | Got: \$\(command\)
+[SUCCESS] Path traversal 1                         | Input: ../../etc/passwd               | Expected: \.\./\.\./etc/passwd           | Got: \.\./\.\./etc/passwd
+[SUCCESS] Path traversal Windows                   | Input: ..\..\windows\system32         | Expected: \.\.\\\.\.\\windows\\system32  | Got: \.\.\\\.\.\\windows\\system32
+[SUCCESS] URL encoded traversal                    | Input: %2e%2e%2f%2e%2e%2f             | Expected: %2e%2e%2f%2e%2e%2f             | Got: %2e%2e%2f%2e%2e%2f
+[SUCCESS] XSS basic                                | Input: <script>alert('XSS')</script>  | Expected: <script>alert\('XSS'\)</script> | Got: <script>alert\('XSS'\)</script>
+[SUCCESS] XSS javascript                           | Input: javascript:alert(1)            | Expected: javascript:alert\(1\)          | Got: javascript:alert\(1\)
+[SUCCESS] XSS img tag                              | Input: <img src=x onerror=alert(1)>   | Expected: <img src=x onerror=alert\(1\)> | Got: <img src=x onerror=alert\(1\)>
+[SUCCESS] Regex bomb 1                             | Input: (a+)+b                         | Expected: \(a\+\)\+b                     | Got: \(a\+\)\+b
+[SUCCESS] Regex bomb 2                             | Input: (a*)*b                         | Expected: \(a\*\)\*b                     | Got: \(a\*\)\*b
+[SUCCESS] Regex bomb 3                             | Input: (a|a)*b                        | Expected: \(a\|a\)\*b                    | Got: \(a\|a\)\*b
+[SUCCESS] Regex bomb 4                             | Input: (a|ab)*c                       | Expected: \(a\|ab\)\*c                   | Got: \(a\|ab\)\*c
+[SUCCESS] Hex escape sequences                     | Input: \x00\x01\x02                   | Expected: \\x00\\x01\\x02                | Got: \\x00\\x01\\x02
+[SUCCESS] Unicode escape sequences                 | Input: \u0000\u0001                   | Expected: \\u0000\\u0001                 | Got: \\u0000\\u0001
+[SUCCESS] Control char escapes                     | Input: \n\r\t\f\v                     | Expected: \\n\\r\\t\\f\\v                | Got: \\n\\r\\t\\f\\v
+[SUCCESS] Nested groups 1                          | Input: ((a)(b))((c)(d))               | Expected: \(\(a\)\(b\)\)\(\(c\)\(d\)\)   | Got: \(\(a\)\(b\)\)\(\(c\)\(d\)\)
+[SUCCESS] 5-level nesting                          | Input: (((((a)))))                    | Expected: \(\(\(\(\(a\)\)\)\)\)          | Got: \(\(\(\(\(a\)\)\)\)\)
+[SUCCESS] Nested alternations                      | Input: ((a|b)|(c|d))                  | Expected: \(\(a\|b\)\|\(c\|d\)\)         | Got: \(\(a\|b\)\|\(c\|d\)\)
+[SUCCESS] Positive lookahead                       | Input: (?=abc)                        | Expected: \(\?=abc\)                     | Got: \(\?=abc\)
+[SUCCESS] Negative lookahead                       | Input: (?!abc)                        | Expected: \(\?!abc\)                     | Got: \(\?!abc\)
+[SUCCESS] Positive lookbehind                      | Input: (?<=abc)                       | Expected: \(\?<=abc\)                    | Got: \(\?<=abc\)
+[SUCCESS] Negative lookbehind                      | Input: (?<!abc)                       | Expected: \(\?<!abc\)                    | Got: \(\?<!abc\)
+[SUCCESS] Zero quantifier                          | Input: {0}                            | Expected: \{0\}                          | Got: \{0\}
+[SUCCESS] One quantifier                           | Input: {1}                            | Expected: \{1\}                          | Got: \{1\}
+[SUCCESS] Large quantifier                         | Input: {999}                          | Expected: \{999\}                        | Got: \{999\}
+[SUCCESS] Open-ended quantifier                    | Input: {1,}                           | Expected: \{1,\}                         | Got: \{1,\}
+[SUCCESS] Upper bound only                         | Input: {,10}                          | Expected: \{,10\}                        | Got: \{,10\}
+[SUCCESS] Exact same bounds                        | Input: {5,5}                          | Expected: \{5,5\}                        | Got: \{5,5\}
+[SUCCESS] Zero-zero quantifier                     | Input: {0,0}                          | Expected: \{0,0\}                        | Got: \{0,0\}
+[SUCCESS] Negated empty class                      | Input: [^]                            | Expected: \[\^\]                         | Got: \[\^\]
+[SUCCESS] Class with closing bracket               | Input: []]                            | Expected: \[\]\]                         | Got: \[\]\]
+[SUCCESS] Class with opening bracket               | Input: [[]                            | Expected: \[\[\]                         | Got: \[\[\]
+[SUCCESS] Escaped bracket in class                 | Input: [\]]                           | Expected: \[\\\]\]                       | Got: \[\\\]\]
+[SUCCESS] Complex char class                       | Input: [a-zA-Z0-9_.-]                 | Expected: \[a\-zA\-Z0\-9_\.\-\]          | Got: \[a\-zA\-Z0\-9_\.\-\]
+[SUCCESS] Negated alphanum                         | Input: [^a-zA-Z0-9]                   | Expected: \[\^a\-zA\-Z0\-9\]             | Got: \[\^a\-zA\-Z0\-9\]
+[SUCCESS] Word boundaries                          | Input: \b\w+\b                        | Expected: \\b\\w\+\\b                    | Got: \\b\\w\+\\b
+[SUCCESS] Non-word boundaries                      | Input: \B\w+\B                        | Expected: \\B\\w\+\\B                    | Got: \\B\\w\+\\B
+[SUCCESS] Empty line match                         | Input: ^$                             | Expected: \^\$                           | Got: \^\$
+[SUCCESS] Full line match                          | Input: ^.*$                           | Expected: \^\.\*\$                       | Got: \^\.\*\$
+[SUCCESS] Backreference 1                          | Input: (a)\1                          | Expected: \(a\)\\1                       | Got: \(a\)\\1
+[SUCCESS] Backreference with space                 | Input: (\w+)\s+\1                     | Expected: \(\\w\+\)\\s\+\\1              | Got: \(\\w\+\)\\s\+\\1
+[SUCCESS] Quote matching                           | Input: (['"]).*?\1                    | Expected: \(\['"\]\)\.\*\?\\1            | Got: \(\['"\]\)\.\*\?\\1
+[SUCCESS] Double quotes                            | Input: "test"                         | Expected: "test"                         | Got: "test"
+[SUCCESS] Single quotes                            | Input: 'test'                         | Expected: 'test'                         | Got: 'test'
+[SUCCESS] Backticks                                | Input: `test`                         | Expected: `test`                         | Got: `test`
+[SUCCESS] All quotes mixed                         | Input: "'`test`'"                     | Expected: "'`test`'"                     | Got: "'`test`'"
+[SUCCESS] Unix path                                | Input: /usr/local/bin                 | Expected: /usr/local/bin                 | Got: /usr/local/bin
+[SUCCESS] Windows path with space                  | Input: C:\Program Files\App           | Expected: C:\\Program Files\\App         | Got: C:\\Program Files\\App
+[SUCCESS] UNC path                                 | Input: \\server\share\file            | Expected: \\\\server\\share\\file        | Got: \\\\server\\share\\file
+[SUCCESS] Relative path with dot                   | Input: ./relative/path                | Expected: \./relative/path               | Got: \./relative/path
+[SUCCESS] Parent path                              | Input: ../parent/path                 | Expected: \.\./parent/path               | Got: \.\./parent/path
+[SUCCESS] Data URI                                 | Input: data:text/plain;base64,SGVsbG8= | Expected: data:text/plain;base64,SGVsbG8= | Got: data:text/plain;base64,SGVsbG8=
+[SUCCESS] File URI                                 | Input: file:///C:/path/file.txt       | Expected: file:///C:/path/file\.txt      | Got: file:///C:/path/file\.txt
+[SUCCESS] Mailto URI                               | Input: mailto:user@example.com?subject=Test | Expected: mailto:user@example\.com\?subject=Test | Got: mailto:user@example\.com\?subject=Test
+[SUCCESS] Math expression                          | Input: (x+y)*(a-b)/c^2                | Expected: \(x\+y\)\*\(a\-b\)/c\^2        | Got: \(x\+y\)\*\(a\-b\)/c\^2
+[SUCCESS] Function notation                        | Input: f(x)=x^2+2*x+1                 | Expected: f\(x\)=x\^2\+2\*x\+1           | Got: f\(x\)=x\^2\+2\*x\+1
+[SUCCESS] Summation (with unicode)                 | Input: ∑(i=1 to n) i^2              | Expected: ∑\(i=1 to n\) i\^2           | Got: ∑\(i=1 to n\) i\^2
+[SUCCESS] Log with timestamp                       | Input: [2024-01-28 14:30:45.123] ERROR: Failed | Expected: \[2024\-01\-28 14:30:45\.123\] ERROR: Failed | Got: \[2024\-01\-28 14:30:45\.123\] ERROR: Failed
+[SUCCESS] Apache log format                        | Input: 192.168.1.1 - - [28/Jan/2024:14:30:45 +0000] | Expected: 192\.168\.1\.1 \- \- \[28/Jan/2024:14:30:45 \+0000\] | Got: 192\.168\.1\.1 \- \- \[28/Jan/2024:14:30:45 \+0000\]
+[SUCCESS] JSON object                              | Input: {"key": "value", "num": 123}   | Expected: \{"key": "value", "num": 123\} | Got: \{"key": "value", "num": 123\}
+[SUCCESS] JSON array                               | Input: [1, 2, 3, "test"]              | Expected: \[1, 2, 3, "test"\]            | Got: \[1, 2, 3, "test"\]
+[SUCCESS] Named group                              | Input: (?<name>pattern)               | Expected: \(\?<name>pattern\)            | Got: \(\?<name>pattern\)
+[SUCCESS] Python named group                       | Input: (?P<word>\w+)                  | Expected: \(\?P<word>\\w\+\)             | Got: \(\?P<word>\\w\+\)
+[SUCCESS] Conditional pattern                      | Input: (?(1)yes|no)                   | Expected: \(\?\(1\)yes\|no\)             | Got: \(\?\(1\)yes\|no\)
+[SUCCESS] Strong password regex                    | Input: ^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+-={}|:"<>?,.]).{12,}$ | Expected: \^\(\?=\.\*\[A\-Z\]\)\(\?=\.\*\[a\-z\]\)\(\?=\.\*\[0\-9\]\)\(\?=\.\*\[!@#\$%\^&\*\(\)_\+\-=\{\}\|:"<>\?,\.\]\)\.\{12,\}\$ | Got: \^\(\?=\.\*\[A\-Z\]\)\(\?=\.\*\[a\-z\]\)\(\?=\.\*\[0\-9\]\)\(\?=\.\*\[!@#\$%\^&\*\(\)_\+\-=\{\}\|:"<>\?,\.\]\)\.\{12,\}\$
+[SUCCESS] Credit card regex                        | Input: ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[47][0-9]{13})$ | Expected: \^\(\?:4\[0\-9\]\{12\}\(\?:\[0\-9\]\{3\}\)\?\|5\[1\-5\]\[0\-9\]\{14\}\|3\[47\]\[0\-9\]\{13\}\)\$ | Got: \^\(\?:4\[0\-9\]\{12\}\(\?:\[0\-9\]\{3\}\)\?\|5\[1\-5\]\[0\-9\]\{14\}\|3\[47\]\[0\-9\]\{13\}\)\$
+[SUCCESS] IPv6 regex                               | Input: ([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4} | Expected: \(\[0\-9a\-fA\-F\]\{1,4\}:\)\{7\}\[0\-9a\-fA\-F\]\{1,4\} | Got: \(\[0\-9a\-fA\-F\]\{1,4\}:\)\{7\}\[0\-9a\-fA\-F\]\{1,4\}
+[SUCCESS] Evil nested quantifiers                  | Input: ((a*)*|(b+)+)*c                | Expected: \(\(a\*\)\*\|\(b\+\)\+\)\*c    | Got: \(\(a\*\)\*\|\(b\+\)\+\)\*c
+[SUCCESS] All special ASCII chars                  | Input: !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~ | Expected: !"#\$%&'\(\)\*\+,\-\./:;<=>\?@\[\\\]\^_`\{\|\}~ | Got: !"#\$%&'\(\)\*\+,\-\./:;<=>\?@\[\\\]\^_`\{\|\}~
+[SUCCESS] 50 dots (extreme)                        | Input: .................................................. | Expected: \.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\. | Got: \.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.
+[SUCCESS] 100 stars (extreme)                      | Input: **************************************************************************************************** | Expected: \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\* | Got: \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
+
+================================================================================
+TEST SUMMARY
+================================================================================
+Total tests:  178
+Passed:       178 (100.0%)
+Failed:       0 (0.0%)
+Execution:    0 ms
+================================================================================
