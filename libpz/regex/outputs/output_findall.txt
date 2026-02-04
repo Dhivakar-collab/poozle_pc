@@ -1,0 +1,203 @@
+====================================================================
+           NFA MATCHER - COMPREHENSIVE FIND_ALL TESTS              
+====================================================================
+
+SECTION 1: Basic Literal Matching (10 tests)
+----------------------------------------------------------------
+[✓] Single char 'a' in 'banana'                        | Expected: 3   | Got: 3   | Time: 37     µs
+[✓] Pattern 'an' in 'banana'                           | Expected: 2   | Got: 2   | Time: 14     µs
+[✓] Pattern 'na' in 'banana'                           | Expected: 2   | Got: 2   | Time: 8      µs
+[✓] Word 'cat' twice                                   | Expected: 2   | Got: 2   | Time: 14     µs
+[✓] Word 'the' twice                                   | Expected: 2   | Got: 2   | Time: 16     µs
+[✓] Pattern 'xyz' three times                          | Expected: 3   | Got: 3   | Time: 11     µs
+[✓] Prefix 'test' in 'testing'                         | Expected: 1   | Got: 1   | Time: 13     µs
+[✓] Suffix 'ing' three times                           | Expected: 3   | Got: 3   | Time: 12     µs
+[✓] Word 'hello' three times                           | Expected: 3   | Got: 3   | Time: 17     µs
+[✓] Pattern in empty string                            | Expected: 0   | Got: 0   | Time: 3      µs
+
+SECTION 2: Dot Operator (.) (10 tests)
+----------------------------------------------------------------
+[✓] Pattern 'c.t' matches                              | Expected: 4   | Got: 4   | Time: 12     µs
+[✓] Three-char chunks                                  | Expected: 3   | Got: 3   | Time: 27     µs
+[✓] Pattern 'a.c' matches                              | Expected: 4   | Got: 4   | Time: 12     µs
+[✓] Dot matches each char                              | Expected: 5   | Got: 5   | Time: 10     µs
+[✓] Two-char chunks                                    | Expected: 2   | Got: 2   | Time: 7      µs
+[✓] Four-char chunks                                   | Expected: 2   | Got: 2   | Time: 9      µs
+[✓] Pattern 'a.b.c'                                    | Expected: 1   | Got: 1   | Time: 9      µs
+[✓] Pattern 't.e'                                      | Expected: 4   | Got: 4   | Time: 11     µs
+[✓] Pattern '.o.'                                      | Expected: 2   | Got: 2   | Time: 9      µs
+[✓] Pattern 'b.t' six times                            | Expected: 6   | Got: 6   | Time: 14     µs
+
+SECTION 3: Alternation (|) (10 tests)
+----------------------------------------------------------------
+[✓] cat or dog                                         | Expected: 3   | Got: 3   | Time: 41     µs
+[✓] Vowels in 'hello world'                            | Expected: 3   | Got: 3   | Time: 43     µs
+[✓] Colors                                             | Expected: 4   | Got: 4   | Time: 54     µs
+[✓] yes or no                                          | Expected: 6   | Got: 6   | Time: 24     µs
+[✓] Three alternatives                                 | Expected: 5   | Got: 5   | Time: 33     µs
+[✓] abc or def                                         | Expected: 5   | Got: 5   | Time: 20     µs
+[✓] Numbers                                            | Expected: 6   | Got: 6   | Time: 35     µs
+[✓] Animals                                            | Expected: 7   | Got: 7   | Time: 36     µs
+[✓] aa or bb                                           | Expected: 5   | Got: 5   | Time: 19     µs
+[✓] x, y, or z                                         | Expected: 7   | Got: 7   | Time: 27     µs
+
+SECTION 4: Star Quantifier (*) (10 tests)
+----------------------------------------------------------------
+[✓] Zero or more 'a' in 'bbb'                          | Expected: 4   | Got: 4   | Time: 10     µs
+[✓] Zero or more 'a' in 'aaa'                          | Expected: 2   | Got: 2   | Time: 9      µs
+[✓] ba* pattern                                        | Expected: 4   | Got: 4   | Time: 18     µs
+[✓] ab*c pattern                                       | Expected: 4   | Got: 4   | Time: 18     µs
+[✓] go*d pattern                                       | Expected: 4   | Got: 4   | Time: 17     µs
+[✓] a*b pattern                                        | Expected: 4   | Got: 4   | Time: 21     µs
+[✓] x*y pattern                                        | Expected: 4   | Got: 4   | Time: 16     µs
+[✓] (ab)* pattern                                      | Expected: 6   | Got: 6   | Time: 36     µs
+[✓] (cat)* pattern                                     | Expected: 6   | Got: 6   | Time: 31     µs
+[✓] z* in 'zzz'                                        | Expected: 2   | Got: 2   | Time: 8      µs
+
+SECTION 5: Plus Quantifier (+) (10 tests)
+----------------------------------------------------------------
+[✓] One or more 'a'                                    | Expected: 4   | Got: 4   | Time: 17     µs
+[✓] One or more 'b'                                    | Expected: 4   | Got: 4   | Time: 23     µs
+[✓] ab+c pattern                                       | Expected: 3   | Got: 3   | Time: 22     µs
+[✓] go+d pattern                                       | Expected: 3   | Got: 3   | Time: 23     µs
+[✓] a+b+ pattern                                       | Expected: 4   | Got: 4   | Time: 26     µs
+[✓] x+y+ pattern                                       | Expected: 4   | Got: 4   | Time: 20     µs
+[✓] (ab)+ pattern                                      | Expected: 3   | Got: 3   | Time: 33     µs
+[✓] (cat)+ pattern                                     | Expected: 3   | Got: 3   | Time: 32     µs
+[✓] z+ matches                                         | Expected: 4   | Got: 4   | Time: 21     µs
+[✓] o+ in 'hello world'                                | Expected: 2   | Got: 2   | Time: 14     µs
+
+SECTION 6: Question Quantifier (?) (10 tests)
+----------------------------------------------------------------
+[✓] a?b pattern                                        | Expected: 4   | Got: 4   | Time: 27     µs
+[✓] Optional 'u'                                       | Expected: 4   | Got: 4   | Time: 32     µs
+[✓] ab?c pattern                                       | Expected: 2   | Got: 2   | Time: 18     µs
+[✓] x?y pattern                                        | Expected: 3   | Got: 3   | Time: 19     µs
+[✓] Multiple optional                                  | Expected: 4   | Got: 4   | Time: 77     µs
+[✓] http(s)?://                                        | Expected: 4   | Got: 4   | Time: 37     µs
+[✓] Optional 's'                                       | Expected: 4   | Got: 4   | Time: 25     µs
+[✓] Optional group                                     | Expected: 4   | Got: 4   | Time: 30     µs
+[✓] z? in 'zzz'                                        | Expected: 4   | Got: 4   | Time: 16     µs
+[✓] a? in 'aaa'                                        | Expected: 4   | Got: 4   | Time: 14     µs
+
+SECTION 7: Range Quantifiers ({m,n}) (10 tests)
+----------------------------------------------------------------
+[✓] Exactly 2 'a's                                     | Expected: 4   | Got: 4   | Time: 30     µs
+[✓] Exactly 3 'a's                                     | Expected: 3   | Got: 3   | Time: 25     µs
+[✓] {2,3} quantifier                                   | Expected: 5   | Got: 5   | Time: 37     µs
+[✓] At least 1 'a'                                     | Expected: 4   | Got: 4   | Time: 44     µs
+[✓] {2,4} quantifier                                   | Expected: 6   | Got: 6   | Time: 45     µs
+[✓] (ab){2} pattern                                    | Expected: 2   | Got: 2   | Time: 41     µs
+[✓] x{3,5} pattern                                     | Expected: 4   | Got: 4   | Time: 43     µs
+[✓] (cat){2,3}                                         | Expected: 3   | Got: 3   | Time: 68     µs
+[✓] b{1,2} pattern                                     | Expected: 6   | Got: 6   | Time: 34     µs
+[✓] z{0,2} pattern                                     | Expected: 7   | Got: 7   | Time: 23     µs
+
+SECTION 8: Character Classes (15 tests)
+----------------------------------------------------------------
+[✓] Class [abc]                                        | Expected: 6   | Got: 6   | Time: 16     µs
+[✓] Digits [0-9]                                       | Expected: 4   | Got: 4   | Time: 9      µs
+[✓] Lowercase [a-z]                                    | Expected: 8   | Got: 8   | Time: 14     µs
+[✓] Uppercase [A-Z]                                    | Expected: 2   | Got: 2   | Time: 10     µs
+[✓] Digit sequences                                    | Expected: 3   | Got: 3   | Time: 18     µs
+[✓] Word sequences                                     | Expected: 2   | Got: 2   | Time: 13     µs
+[✓] Capitalized words                                  | Expected: 3   | Got: 3   | Time: 21     µs
+[✓] Vowels in 'hello'                                  | Expected: 2   | Got: 2   | Time: 8      µs
+[✓] Non-vowels in 'hello'                              | Expected: 3   | Got: 3   | Time: 8      µs
+[✓] Hex digits                                         | Expected: 1   | Got: 1   | Time: 13     µs
+[✓] Letter sequences                                   | Expected: 2   | Got: 2   | Time: 13     µs
+[✓] 3-digit sequences                                  | Expected: 3   | Got: 3   | Time: 17     µs
+[✓] Alphanumeric                                       | Expected: 2   | Got: 2   | Time: 23     µs
+[✓] Non-digit sequences                                | Expected: 2   | Got: 2   | Time: 16     µs
+[✓] Class [xyz]                                        | Expected: 6   | Got: 6   | Time: 19     µs
+
+SECTION 9: Anchors (^ and $) (10 tests)
+----------------------------------------------------------------
+[✓] Start anchor ^                                     | Expected: 1   | Got: 1   | Time: 19     µs
+[✓] End anchor $                                       | Expected: 1   | Got: 1   | Time: 23     µs
+[✓] Both anchors                                       | Expected: 1   | Got: 1   | Time: 12     µs
+[✓] Start with 'abc'                                   | Expected: 1   | Got: 1   | Time: 13     µs
+[✓] End with 'xyz'                                     | Expected: 1   | Got: 1   | Time: 16     µs
+[✓] Single char match                                  | Expected: 1   | Got: 1   | Time: 8      µs
+[✓] Exact 3 chars                                      | Expected: 1   | Got: 1   | Time: 12     µs
+[✓] Only digits                                        | Expected: 1   | Got: 1   | Time: 20     µs
+[✓] Multiple but start only                            | Expected: 1   | Got: 1   | Time: 9      µs
+[✓] Multiple but end only                              | Expected: 1   | Got: 1   | Time: 10     µs
+
+SECTION 10: Capture Groups (10 tests)
+----------------------------------------------------------------
+[✓] Simple group (cat)                                 | Expected: 2   | Got: 2   | Time: 16     µs
+[✓] Two groups (a+)(b+)                                | Expected: 3   | Got: 3   | Time: 40     µs
+[✓] Group with alternation                             | Expected: 4   | Got: 4   | Time: 29     µs
+[✓] Hyphenated numbers                                 | Expected: 2   | Got: 2   | Time: 37     µs
+[✓] Nested groups                                      | Expected: 3   | Got: 3   | Time: 23     µs
+[✓] Three groups                                       | Expected: 2   | Got: 2   | Time: 37     µs
+[✓] Repeated groups                                    | Expected: 2   | Got: 2   | Time: 54     µs
+[✓] Simple repeated group                              | Expected: 3   | Got: 3   | Time: 15     µs
+[✓] Three single-char groups                           | Expected: 2   | Got: 2   | Time: 20     µs
+[✓] Alternative groups                                 | Expected: 4   | Got: 4   | Time: 36     µs
+
+SECTION 11: Complex Patterns (10 tests)
+----------------------------------------------------------------
+[✓] Alternation with +                                 | Expected: 3   | Got: 3   | Time: 40     µs
+[✓] Alternation with * then c                          | Expected: 7   | Got: 7   | Time: 53     µs
+[✓] Phone format                                       | Expected: 2   | Got: 2   | Time: 28     µs
+[✓] Parenthesized nums                                 | Expected: 2   | Got: 2   | Time: 21     µs
+[✓] Simple email pattern                               | Expected: 2   | Got: 2   | Time: 33     µs
+[✓] Complex alternation                                | Expected: 5   | Got: 5   | Time: 46     µs
+[✓] Capitalized words                                  | Expected: 4   | Got: 4   | Time: 25     µs
+[✓] Punctuation                                        | Expected: 3   | Got: 3   | Time: 40     µs
+[✓] Greedy .* between a and b                          | Expected: 1   | Got: 1   | Time: 18     µs
+[✓] Word then dot                                      | Expected: 2   | Got: 2   | Time: 56     µs
+
+SECTION 12: Edge Cases (10 tests)
+----------------------------------------------------------------
+[✓] Empty pattern                                      | Expected: 4   | Got: 4   | Time: 8      µs
+[✓] Pattern on empty text                              | Expected: 0   | Got: 0   | Time: 2      µs
+[✓] Both empty                                         | Expected: 1   | Got: 1   | Time: 2      µs
+[✓] Non-overlapping 'aa'                               | Expected: 2   | Got: 2   | Time: 7      µs
+[✓] Non-overlapping 'aba'                              | Expected: 2   | Got: 2   | Time: 8      µs
+[✓] Non-overlapping 'aaa'                              | Expected: 2   | Got: 2   | Time: 6      µs
+[✓] Exact match                                        | Expected: 1   | Got: 1   | Time: 4      µs
+[✓] .* matches                                         | Expected: 2   | Got: 2   | Time: 9      µs
+[✓] Nested stars                                       | Expected: 2   | Got: 2   | Time: 18     µs
+
+SECTION 13: Real-World Patterns (15 tests)
+----------------------------------------------------------------
+[✓] Email addresses                                    | Expected: 2   | Got: 2   | Time: 56     µs
+[✓] HTTPS URLs                                         | Expected: 2   | Got: 2   | Time: 35     µs
+[✓] Capitalized words                                  | Expected: 9   | Got: 9   | Time: 38     µs
+[✓] IP addresses                                       | Expected: 2   | Got: 2   | Time: 62     µs
+[✓] Acronyms                                           | Expected: 5   | Got: 5   | Time: 24     µs
+[✓] Hex colors                                         | Expected: 3   | Got: 3   | Time: 24     µs
+[✓] Prices                                             | Expected: 2   | Got: 2   | Time: 21     µs
+[✓] ISO dates                                          | Expected: 2   | Got: 2   | Time: 31     µs
+[✓] Version numbers                                    | Expected: 3   | Got: 3   | Time: 31     µs
+[✓] Percentages                                        | Expected: 4   | Got: 4   | Time: 20     µs
+[✓] Twitter handles                                    | Expected: 2   | Got: 2   | Time: 22     µs
+[✓] Phone numbers                                      | Expected: 2   | Got: 2   | Time: 40     µs
+[✓] Flight codes                                       | Expected: 2   | Got: 2   | Time: 21     µs
+[✓] US phone format                                    | Expected: 2   | Got: 2   | Time: 37     µs
+[✓] ZIP codes                                          | Expected: 2   | Got: 2   | Time: 33     µs
+
+SECTION 14: Performance Tests (5 tests)
+----------------------------------------------------------------
+[✓] 10,000 'a' chars                                   | Expected: 10000 | Got: 10000 | Time: 19276  µs
+[✓] 1,000 'abc' patterns                               | Expected: 1000 | Got: 1000 | Time: 1964   µs
+[✓] 500 number sequences                               | Expected: 500 | Got: 500 | Time: 2057   µs
+[✓] 400 alternations                                   | Expected: 400 | Got: 400 | Time: 961    µs
+[✓] 100 emails                                         | Expected: 100 | Got: 100 | Time: 851    µs
+
+====================================================================
+                        TEST SUMMARY                                
+====================================================================
+Total Tests:      144
+Passed:           144 (100.0%)
+Failed:           0 (0.0%)
+--------------------------------------------------------------------
+Total Execution Time:     31 ms
+Average Time per Test:    197 µs
+====================================================================
+
+ ALL TESTS PASSED!
+
