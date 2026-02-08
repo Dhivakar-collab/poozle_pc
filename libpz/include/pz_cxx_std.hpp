@@ -11,6 +11,7 @@
 #include <optional>
 #include <set>
 #include <sstream>
+#include <stack>
 #include <string>
 #include <string_view>
 #include <unordered_map>
