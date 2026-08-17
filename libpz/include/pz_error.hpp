@@ -22,4 +22,29 @@ enum class PzError::PzErrorType {
   PZ_FILE_NOT_FOUND,
 };
 
+namespace fuzzy {
+
+class FileNotFoundError : public std::runtime_error {
+public:
+    explicit FileNotFoundError(std::string_view path) 
+    : std::runtime_error("Could not open file " + std::string(path)) {}
+};
+
+class EmptyDataError : public std::runtime_error {
+public:
+    EmptyDataError() : std::runtime_error("no data found in input file") {}
+};
+
+class InvalidQueryError : public std::runtime_error {
+public:
+    explicit InvalidQueryError(std::string_view reason) 
+    : std::runtime_error("Invalid Query " + std::string(reason)) {}
+};
+
+class LongPatternError : public std::runtime_error {
+public:
+    LongPatternError() : std::runtime_error("Pattern length is more than 63") {}
+};
+}
+
 #endif // PZ_ERROR_HPP
