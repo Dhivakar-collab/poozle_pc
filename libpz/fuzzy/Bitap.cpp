@@ -1,8 +1,7 @@
 #include "../include/Bitap.hpp"
 #include "../include/pz_error.hpp"
 #include "../include/pz_types.hpp"
-#include <cstdint>
-#include <vector>
+#include "../include/pz_cxx_std.hpp"
 
 /**
  * @brief Searches for mutliple occurrences of a pattern in a text using the Bitap algorithm.
@@ -14,7 +13,7 @@
  * 
  * @throws PzError::PzErrorType::PZ_LONG_PATTERN_ERROR If pattern length exceeds 63 characters.
  */
-std::vector<st32> bitap_search(std::string word, std::string pattern) {
+std::vector<st32> bitap_search(std::string word, std::string pattern, st32 max_errors) {
     const std::size_t m = pattern.length();
     const std::size_t n = word.length();
 
@@ -27,17 +26,24 @@ std::vector<st32> bitap_search(std::string word, std::string pattern) {
         PzError::report_error(PzError::PzErrorType::PZ_LONG_PATTERN_ERROR, "Pattern length is greater than 63");
         return locations;
     }
+    if (max_errors >= m) {
+        PzError::report_error(PzError::PzErrorType::PZ_INVALID_ANALYSIS_TYPE, "All the words are a match with such a high max_errors.");
+    }
 
     /** Precomputed bitmask for each character byte (0-255). */
     st64 p_mask[256];
-    
-    /** State bitmask. Bit 0 is initialized to 0 to accept new match starts. */
-    st64 A = ~1ULL;
 
     // Initialize all character masks to all 1-bits (no matches)
-    for (st32 i = 0; i < 256; ++i) {
-        p_mask[i] = ~0ULL;
+    std::fill(std::begin(p_mask), std::end(p_mask), ~0ULL);
+    
+    // State array for 0 to max_errors errors
+    std::vector<st64> R(max_errors + 1, ~0ULL);
+
+    // Initial state setup for insertion/deletion at string boundaries
+    for (st32 d = 0; d <= max_errors; ++d) {
+        R[d] = ~0ULL << d;
     }
+    
 
     // Set bit 'i' to 0 wherever character pattern[i] appears
     for (std::size_t i = 0; i < m; ++i) {
@@ -46,12 +52,27 @@ std::vector<st32> bitap_search(std::string word, std::string pattern) {
 
     // Process each character of the text
     for (std::size_t i = 0; i < n; ++i) {
-        A |= p_mask[static_cast<unsigned char>(word[i])];
-        A <<= 1;
+        st64 char_mask = p_mask[static_cast<unsigned char>(word[i])];
+        
+        st64 R_old_prev = R[0];
+        R[0] = (R[0] << 1) | char_mask;
+        
+        for (st32 d = 1; d <= max_errors; ++d) {
+            st64 R_old_curr = R[d];
+            
+            // Apply Wu-Manber bitwise state transitions
+            st64 sub  = R_old_prev << 1;
+            st64 del  = R_old_prev;
+            st64 ins  = R[d - 1] << 1;
+            st64 match = (R_old_curr << 1) | char_mask;
 
-        // Check if bit 'm' is 0 (indicating a full pattern match ended at index i)
-        if ((A & (1ULL << m)) == 0) {
-            locations.push_back(static_cast<int>(i - m + 1));
+            R[d] = match & sub & del & ins;
+            R_old_prev = R_old_curr;
+        }
+
+        // If highest level state bit m is 0, a match with <= max_errors exists
+        if ((R[max_errors] & (1ULL << m)) == 0) {
+            locations.push_back(static_cast<st32>(i));
         }
     }
 
