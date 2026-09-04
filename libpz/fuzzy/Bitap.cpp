@@ -13,21 +13,23 @@
  * 
  * @throws PzError::PzErrorType::PZ_LONG_PATTERN_ERROR If pattern length exceeds 63 characters.
  */
-std::vector<st32> bitap_search(std::string word, std::string pattern, st32 max_errors) {
+std::variant<st32, std::array<st32, 64>> bitap_search(const std::string& text, const std::string& pattern, st32 max_errors) {
     const std::size_t m = pattern.length();
-    const std::size_t n = word.length();
+    const std::size_t n = text.length();
 
-    std::vector<st32> locations; 
+    std::array<st32, 64> locations; locations.fill(-1);
+    st32 index = 0;
 
     if (m == 0) {
-        return locations;
+        return locations;    // as no match is found
     }
     if (m > 63) {
         PzError::report_error(PzError::PzErrorType::PZ_LONG_PATTERN_ERROR, "Pattern length is greater than 63");
         return locations;
     }
     if (max_errors >= m) {
-        PzError::report_error(PzError::PzErrorType::PZ_INVALID_ANALYSIS_TYPE, "All the words are a match with such a high max_errors.");
+        PzError::report_error(PzError::PzErrorType::PZ_INVALID_ANALYSIS_TYPE, "All the pattern are a match with such a high max_errors.");
+        return locations;
     }
 
     /** Precomputed bitmask for each character byte (0-255). */
@@ -52,7 +54,7 @@ std::vector<st32> bitap_search(std::string word, std::string pattern, st32 max_e
 
     // Process each character of the text
     for (std::size_t i = 0; i < n; ++i) {
-        st64 char_mask = p_mask[static_cast<unsigned char>(word[i])];
+        st64 char_mask = p_mask[static_cast<unsigned char>(text[i])];
         
         st64 R_old_prev = R[0];
         R[0] = (R[0] << 1) | char_mask;
@@ -71,8 +73,8 @@ std::vector<st32> bitap_search(std::string word, std::string pattern, st32 max_e
         }
 
         // If highest level state bit m is 0, a match with <= max_errors exists
-        if ((R[max_errors] & (1ULL << m)) == 0) {
-            locations.push_back(static_cast<st32>(i));
+        if ((R[max_errors] & (1ULL << (m - 1))) == 0) {
+            locations[index++] = (static_cast<st32>(i - m + 1));
         }
     }
 
