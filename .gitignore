@@ -1,2 +1,7 @@
 .vscode/
 build/
+builddir/
+test/pz-test
+test/files
+subprojects/*
+!subprojects/*.wrap
