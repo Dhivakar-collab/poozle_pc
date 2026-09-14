@@ -1,7 +1,7 @@
+#include "NfaBuilder.hpp"
 #include "NfaMatcher.hpp"
-#include "nfa_builder.hpp"
-#include "postfix.hpp"
-#include "tokenizer.hpp"
+#include "RegexPostfix.hpp"
+#include "RegexTokenizer.hpp"
 #include <chrono>
 #include <iomanip>
 #include <iostream>
@@ -55,7 +55,7 @@ void test_find_all(const string &pattern, const string &text,
 
     Tokenizer tokenizer(pattern);
     auto tokens = tokenizer.tokenize();
-    auto postfix = PostfixConverter::convert(tokens);
+    auto postfix = Postfix::convert(tokens);
     NfaBuilder builder;
     State *start = builder.build(postfix);
     NfaMatcher matcher(start);
@@ -89,7 +89,7 @@ void test_find_all_expected(const string &pattern, const string &text,
 
     Tokenizer tokenizer(pattern);
     auto tokens = tokenizer.tokenize();
-    auto postfix = PostfixConverter::convert(tokens);
+    auto postfix = Postfix::convert(tokens);
     NfaBuilder builder;
     State *start = builder.build(postfix);
     NfaMatcher matcher(start);

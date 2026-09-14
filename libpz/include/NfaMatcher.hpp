@@ -16,12 +16,22 @@ struct MatchResult {
   MatchResult(bool matched_, st32 start_pos_, st32 end_pos_,
               std::vector<std::pair<st32, st32>> captures_)
       : matched(matched_), start_pos(start_pos_), end_pos(end_pos_),
-        captures(captures_) {}
+        captures(std::move(captures_)) {}
 
-  // move constructor
+  MatchResult(const MatchResult &) = default;
+  MatchResult &operator=(const MatchResult &) = default;
+
   MatchResult(MatchResult &&rhs) noexcept
-      : matched(std::move(rhs.matched)), start_pos(std::move(rhs.start_pos)),
-        end_pos(std::move(rhs.end_pos)), captures(std::move(captures)) {}
+      : matched(rhs.matched), start_pos(rhs.start_pos), end_pos(rhs.end_pos),
+        captures(std::move(rhs.captures)) {}
+
+  MatchResult &operator=(MatchResult &&rhs) noexcept {
+    matched = rhs.matched;
+    start_pos = rhs.start_pos;
+    end_pos = rhs.end_pos;
+    captures = std::move(rhs.captures);
+    return *this;
+  }
 };
 
 class NfaMatcher {

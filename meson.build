@@ -16,3 +16,8 @@ add_project_arguments(
 )
 
 subdir('libpz')
+
+# Optional gtest suite (meson_options.txt → -Dtests=enabled|disabled).
+if get_option('tests').enabled()
+  subdir('test')
+endif
