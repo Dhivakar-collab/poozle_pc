@@ -48,9 +48,8 @@ LayeredFuzzyMatcher::search(const std::string &text, st32 max_errors) const {
   return results;
 }
 
-std::vector<st32>
-LayeredFuzzyMatcher::run_bitap_filter(const std::string &text,
-                                      st32 max_errors) const {
+std::vector<st32> LayeredFuzzyMatcher::run_bitap_filter(const std::string &text,
+                                                        st32 max_errors) const {
   std::vector<st32> candidates;
   const st32 n = static_cast<st32>(text.length());
 

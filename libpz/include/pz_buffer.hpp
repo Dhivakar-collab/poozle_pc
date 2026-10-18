@@ -10,7 +10,7 @@
 /** @brief namespace PzStd */
 namespace PzStd {
 enum class PzBufferType; /** Enum for buffer storage optimization modes */
-};                       // namespace PzStd
+}; // namespace PzStd
 
 /** @brief Custom type definitions used in buffer */
 using PzErrorType = PzError::PzErrorType;

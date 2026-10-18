@@ -29,8 +29,8 @@ public:
   /**
    * @brief Performs layered fuzzy search across input text within error bounds.
    * @param text Target text string to search within.
-   * @param max_errors Maximum allowed Levenshtein edit distance (0 <= max_errors
-   * < pattern.length()).
+   * @param max_errors Maximum allowed Levenshtein edit distance (0 <=
+   * max_errors < pattern.length()).
    * @return std::vector<Match> Collection of matches with start/end indices and
    * edit distances.
    * @throws PzError::PzErrorType::PZ_INVALID_ANALYSIS_TYPE If max_errors is

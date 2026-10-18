@@ -23,5 +23,4 @@ enum class PzError::PzErrorType {
   PZ_LONG_PATTERN_ERROR
 };
 
-
 #endif // PZ_ERROR_HPP
