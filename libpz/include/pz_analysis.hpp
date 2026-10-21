@@ -15,7 +15,7 @@ class PzAnalysisImpl;  /** Abstract base class for analysis implementations */
 class PzAnalysisExact; /** Exact string matching implementation class */
 class PzAnalysisRegex; /** Regex string matching implementation class */
 enum class PzAnalysisType; /** Enum for types of analysis */
-}; // namespace PzStd
+};                         // namespace PzStd
 
 /** @brief Custom type definitions used in analysis */
 using PzAnalysisImplUPtr = std::unique_ptr<PzStd::PzAnalysisImpl>;
