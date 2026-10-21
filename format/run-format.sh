@@ -21,14 +21,19 @@ install_clang_format_macos() {
 }
 
 install_clang_format_windows() {
-    echo "Installing clang-format-16 on Windows (MSYS2/MinGW64)..."
-    if ! command -v pacman &>/dev/null; then
-        echo "MSYS2 pacman not found. Please install MSYS2 from https://www.msys2.org/"
+    echo "Checking for LLVM 16 on Windows..."
+    
+    # Path to standalone LLVM 16 binary
+    LLVM16_PATH="/c/Program Files/LLVM/bin/clang-format.exe"
+
+    if [ -f "$LLVM16_PATH" ]; then
+        CLANG_FORMAT_CMD="$LLVM16_PATH"
+    else
+        echo "Error: LLVM 16 not found at '$LLVM16_PATH'."
+        echo "Please install LLVM 16 via winget by running:"
+        echo "  winget install LLVM.LLVM --version 16.0.6"
         exit 1
     fi
-    pacman -Sy --noconfirm
-    pacman -S --needed --noconfirm mingw-w64-x86_64-clang16
-    CLANG_FORMAT_CMD="clang-format"
 }
 
 case "$OSTYPE" in
@@ -43,7 +48,7 @@ esac
 
 echo "Using $($CLANG_FORMAT_CMD --version)"
 
-echo "Running clang-format-16 on source files..."
+echo "Running clang-format-16 across repository..."
 find . -type f \( -iname "*.cpp" -o -iname "*.hpp" -o -iname "*.c" -o -iname "*.h" \) \
     -exec "$CLANG_FORMAT_CMD" -i {} +
 
